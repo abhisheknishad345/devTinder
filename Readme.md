@@ -1,6 +1,8 @@
 
 - Initialize git
-- gitignore
+- .gitignore
 - Create a remote repo on github
-- push all code to remote origin
+- Push all code to remote origin
+- Play with routes and route extensions ex: /hello
+- Order of the routes matter(be serious)
 
