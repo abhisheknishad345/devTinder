@@ -2,6 +2,11 @@
 const express = require("express")
 
 const app = express()
+const port = 5700
+
+/************************** COMMENT ************************/
+/*
+
 
 app.use("/user", (req, res) =>{
     res.send("Order Matters, maintain your order")
@@ -34,8 +39,23 @@ app.delete("/user", (req, res) =>{
 //     res.send("Namaste Abhishek")
 // });
 
-app.listen(5700, () =>{
-    console.log("Server is succesfully listening..."); 
+*/
+
+// it work for both "/abc" and "/ac" when "?" is there after "b"
+// app.get(/.*fly$/, (req, res) =>{
+//     res.send({Fname:"Vikash", Lname:"Kumar Fly"})
+// })
+
+app.get("/user/:userId/:name/:password", (req, res) =>{
+    // console.log(req.query);
+    console.log(req.params);
+    res.send({Fname:"Vikash", Lname:"Kumar Fly User Testing"})
+})
+
+
+
+app.listen(port, () =>{
+    console.log("Server is succesfully listening.. at port", port); 
 
 
 });
