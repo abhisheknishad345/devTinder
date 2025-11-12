@@ -32,10 +32,26 @@ app.get("/user",
 
 // handle Auth middleware for all request GET, POST
 app.use("/admin", adminAuth)
+// app.use("/user", userAuth)
 
-app.get("/user", userAuth, (req, res) =>{
+app.get("/user/data",userAuth, (req, res, next) =>{
     res.send("User data send")
+} );
+
+app.get("/user/register", userAuth, (req, res) =>{
+    res.send("User registered")
 });
+
+app.get("/user/forgotPassword", userAuth, (req, res) =>{
+    res.send("User forgot the password")
+});
+
+
+
+app.get("/user/login", (req, res) =>{
+    res.send("User logged in")
+})
+
 
 app.get("/admin/getAllData",  (req, res) =>{
     // Logic of checking if the request is authorised 

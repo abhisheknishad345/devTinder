@@ -5,7 +5,7 @@ export  const adminAuth =  (req, res, next) =>{
     const token = "xyz"
     const isAuthorised = token === "xyz"
     if (!isAuthorised) {
-        res.status(401).send("Unauthorised request")
+        res.status(401).send("Unauthorised admin request")
         
     } else {
         next()
@@ -17,7 +17,7 @@ export  const userAuth =  (req, res, next) =>{
     const token = "xyz"
     const isAuthorised = token === "xyz"
     if (!isAuthorised) {
-        res.status(401).send("Unauthorised request")
+        res.status(401).send("Unauthorised user request")
         
     } else {
         next()

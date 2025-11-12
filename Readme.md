@@ -30,5 +30,6 @@
 - Difference b/w app.use and app.all
 - Write a dummy auth middleware for Admin
 - Write a dummy auth middleware for all user routes, except /user/login
+- Write code to handle the error
 
 
