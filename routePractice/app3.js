@@ -5,7 +5,7 @@ const express = require("express")
 const app = express()
 const port = 5700;
 
-const {adminAuth, userAuth} = require("./middleWares/auth")
+const {adminAuth, userAuth} = require("../src/middleWares/auth")
 
 // GET /user => it check all the app.xyz("matching route") function
 /*
