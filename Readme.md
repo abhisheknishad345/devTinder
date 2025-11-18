@@ -41,3 +41,5 @@
 - and Timestamp to Schema
 - Add API level validation on Patch request and Signup post api
 - Data sanitization - Add API validation for each fields
+
+# Never Trust 'req.body'
