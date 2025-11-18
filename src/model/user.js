@@ -1,6 +1,7 @@
 
 // import mongoose from 'mongoose';
 const mongoose = require('mongoose');
+const validator = require('validator')
 const { Schema } = mongoose;
 
 
@@ -23,14 +24,22 @@ const userSchema = mongoose.Schema({
         unique: true,
         lowercase: true,
         // trim: true,
-        validate: {
-            validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-            message: "Invalid email format",
+        validate(value) {
+           // validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid email Format"+value)
+            }
         }
     },
         password: {
             type: String,
-            required: true
+            required: true,
+            validate(value){
+                if(!validator.isStrongPassword(value)){
+                    throw new Error("Enter a strong password: " + value)
+                }
+
+            }
         },
         age: {
             type: Number,
@@ -40,7 +49,7 @@ const userSchema = mongoose.Schema({
             type: String,
             validate(value){
                 if (!["Male", "Female", "Others"].includes(value)) {
-                    throw new Error("Gender data is invalid")
+                    throw new Error("Gender data is invalid: "+value)
                     
                 }
             }
@@ -48,13 +57,13 @@ const userSchema = mongoose.Schema({
         profileurl: {
             type: String,
             minLength: 10,
-            validate: {
-            validator: function (v) {
-                return /^(http|https):\/\/[^ "]+$/.test(v);
-            },
-            message: "Invalid URL format",
-        }
-        }, 
+            validate(value){
+                if(!validator.isURL(value)){
+                    throw new Error("Invalid URL format: " + value)
+                }
+
+            }
+        },
         about:{
             type: String,
             minLength:5,
