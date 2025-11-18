@@ -32,4 +32,12 @@
 - Write a dummy auth middleware for all user routes, except /user/login
 - Write code to handle the error
 
-
+# Homework 4
+- Explore schematype options from the documentaion
+- and required, lowercase, uppercase, min, max, trim
+- Add default
+- Create a custom validate function for gender
+- Improve the DB schema - PUT all appropriate validation on each field in Schema
+- and Timestamp to Schema
+- Add API level validation on Patch request and Signup post api
+- Data sanitization - Add API validation for each fields
