@@ -43,3 +43,8 @@
 - Data sanitization - Add API validation for each fields
 
 # Never Trust 'req.body'
+
+# Homework 5
+- Validate data in signup API
+- Install bcrypt package
+- Create PasswordHash using bcrypt.hash and save the user is encrypted password

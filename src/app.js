@@ -2,6 +2,9 @@
 const express = require("express");
 const connectDB = require("./config/database")
 const User = require("./model/user")
+const {validateSinupData} = require('./utils/validation')
+const bcyrpt = require("bcrypt");
+const { default: isEmail } = require("validator/lib/isEmail");
 
 const app = express()
 const port = 5700;
@@ -14,26 +17,53 @@ app.use(express.json())
  */
 
 app.post("/signup", async (req, res) => {
+    // Validation of data
+    validateSinupData(req)
+    const {Fname,Lname,password,emailId} = req.body;
+    // Encrypt the password
+    const passwordHash = await bcyrpt.hash(password, 10)
+    console.log(passwordHash);
+    // Store the data in DB
 
     // console.log(req.body); // give "undefined", to avoid it use 'Express.json' which convert the json data in JS Object format and U will need a middleware
 
 
     //     // Creating a new instance of User Model
-    const userObj = new User(req.body)
-
+    
     //         Fname: "JJ",
     //         Lname: "Thomson",
     //         emailId: "jjt533@gmail.com",
     //         password: "thomson@165",
     //         age: 21,
-
+    
     try {
+        const userObj = new User({
+            Fname,
+            Lname,
+            password:passwordHash,
+            emailId
+        });
+
 
         await userObj.save();
         res.send("User Added succesfully")
     } catch (err) {
-        res.status(404).send(err.message)
+        res.status(404).send("ERROR: " + err)
 
+    }
+
+})
+
+// Login API
+app.post("/login", (req, res) =>{
+
+    try {
+        
+        const {emailId, password} = req.body
+    } catch (err) {
+        res.status(404).send("ERROR: "+err.message)
+        
+        
     }
 
 })
