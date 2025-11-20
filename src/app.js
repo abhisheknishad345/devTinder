@@ -4,7 +4,7 @@ const connectDB = require("./config/database")
 const User = require("./model/user")
 const {validateSinupData} = require('./utils/validation')
 const bcyrpt = require("bcrypt");
-const { default: isEmail } = require("validator/lib/isEmail");
+// const { default: isEmail } = require("validator/lib/isEmail");
 
 const app = express()
 const port = 5700;
@@ -22,7 +22,7 @@ app.post("/signup", async (req, res) => {
     const {Fname,Lname,password,emailId} = req.body;
     // Encrypt the password
     const passwordHash = await bcyrpt.hash(password, 10)
-    console.log(passwordHash);
+    console.log("Hash Format: " +passwordHash);
     // Store the data in DB
 
     // console.log(req.body); // give "undefined", to avoid it use 'Express.json' which convert the json data in JS Object format and U will need a middleware
@@ -40,7 +40,8 @@ app.post("/signup", async (req, res) => {
         const userObj = new User({
             Fname,
             Lname,
-            password:passwordHash,
+            password: passwordHash,
+            // password,
             emailId
         });
 
@@ -55,18 +56,34 @@ app.post("/signup", async (req, res) => {
 })
 
 // Login API
-app.post("/login", (req, res) =>{
+app.post("/login", async (req, res) =>{
 
     try {
         
-        const {emailId, password} = req.body
+        const {emailId, password} = req.body;
+        const user = await User.findOne({emailId: emailId});
+        if (!user) {
+            throw new Error("Invalid Credentials")
+            
+        }
+        const isValidPassword = await bcyrpt.compare(password, user.password)
+        if (isValidPassword) {
+            res.send("Login Succesfull !!");
+            
+        } else {
+            throw new Error("Invalid Credentials")
+
+            // 6307478432
+            
+        }
+
     } catch (err) {
-        res.status(404).send("ERROR: "+err.message)
+        res.status(404).send("ERROR: " + err.message)
         
         
     }
 
-})
+});
 
 // Get user by email
 app.get("/user", async (req, res) =>{
