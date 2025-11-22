@@ -4,7 +4,10 @@ const connectDB = require("./config/database")
 const User = require("./model/user")
 const {validateSinupData} = require('./utils/validation')
 const bcyrpt = require("bcrypt");
-// const { default: isEmail } = require("validator/lib/isEmail");
+const { cookie } = require("express-validator");
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
+
 
 const app = express()
 const port = 5700;
@@ -12,6 +15,9 @@ const port = 5700;
 
 
 app.use(express.json())
+app.use(cookieParser())
+
+
 /** it tell the Express app
  * Whenever a request comes with JSON data in the body, automatically parse it and convert it into a JavaScript object.”
  */
@@ -59,6 +65,7 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) =>{
 
     try {
+
         
         const {emailId, password} = req.body;
         const user = await User.findOne({emailId: emailId});
@@ -68,7 +75,12 @@ app.post("/login", async (req, res) =>{
         }
         const isValidPassword = await bcyrpt.compare(password, user.password)
         if (isValidPassword) {
+
+            // Create a JWT Token
+            
+            res.cookie("token", "hjbsjdkkkkfhbhsjbs")
             res.send("Login Succesfull !!");
+            // console.log(object);
             
         } else {
             throw new Error("Invalid Credentials")
@@ -84,6 +96,18 @@ app.post("/login", async (req, res) =>{
     }
 
 });
+
+app.get("/profile", (req, res) =>{
+    const coky = req.cookies;
+
+    const {token} = cookie;
+    // Validate my token
+
+    // console.log(coky);
+    res.send("Reading Cookie")
+
+})
+
 
 // Get user by email
 app.get("/user", async (req, res) =>{

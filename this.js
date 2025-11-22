@@ -17,4 +17,19 @@ const person = {
   }
 };
 
-document.getElementById("demo").innerHTML = person.fullName();
+// document.getElementById("demo").innerHTML = person.fullName();
+
+let arr = ["2","1","+","3","*"]
+console.log(arr);
+console.log(arr.length);
+console.log(arr[4]);
+
+let a= 10, b=4;
+console.log(Math.trunc(b/a));
+
+console.log(Function("return 2 * 10 + 3")());
+
+
+
+
+
