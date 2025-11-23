@@ -48,3 +48,12 @@
 - Validate data in signup API
 - Install bcrypt package
 - Create PasswordHash using bcrypt.hash and save the user is encrypted password
+- Create login api
+- Compare password and throw error if email or password is Invalid
+# Homework 6
+- istall cookie parser
+- just send a dummy cookie to user
+- Create GET /profile api and check  if you get cookie back
+- Install jsonwebtoken
+- In Login api, after email and password validation, create a JWT token and send it to user in cookie
+- read the cookie inside your profile API and find the logged in user
