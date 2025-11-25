@@ -4,7 +4,7 @@ const validator = require("validator")
 
 
 const validateSinupData = (req) => {
-    const {Fname, Lname, emailId, password} = req.body
+    const {Fname, Lname, emailId, password} = req.body;
 
     if (!Fname || !Lname) {
         throw new Error("Name is not valid")
@@ -14,11 +14,11 @@ const validateSinupData = (req) => {
         
     } else if (!validator.isEmail(emailId)) {
         
-        throw new Error("Email is Invalid ❌")
+        throw new Error("Email is Invalid ")
         
     } else if (!validator.isStrongPassword(password)) {
         
-        throw new Error("Password is weak, enter strong one ❌")
+        throw new Error("Password is weak, enter strong one")
     }
 
 }
