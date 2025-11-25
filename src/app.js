@@ -7,10 +7,12 @@ const bcrypt = require("bcrypt");
 const { cookie } = require("express-validator");
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
+const bodyParser = require("body-parser");
 
 const app = express()
 const port = 5700;
 
+app.use(bodyParser.json());
 app.use(express.json())
 app.use(cookieParser())
 
@@ -22,9 +24,9 @@ app.use(cookieParser())
 app.post("/signup", async (req, res) => {
     // Validation of data
     validateSinupData(req)
-    const {Fname,Lname,password,emailId} = req.body;
+    const {Fname,Lname,password,emailId,age} = req.body;
     // Encrypt the password
-    // const passwordHash = await bcrypt.hash(password, 10)
+    const passwordHash = await bcrypt.hash(password, 10)
     // console.log("Hash Format: " +passwordHash);
     // Store the data in DB
 
@@ -43,9 +45,10 @@ app.post("/signup", async (req, res) => {
         const userObj = new User({
             Fname,
             Lname,
-            // password: passwordHash,
-            password,
-            emailId
+            password: passwordHash,
+            // password,
+            emailId, 
+            age
         });
 
 
@@ -70,10 +73,10 @@ app.post("/login", async (req, res) =>{
             throw new Error("Invalid Credentials")
             
         }
-        // const isValidPassword = await bcrypt.compare(password, user.password);
+         const isValidPassword = await bcrypt.compare(password, user.password);
 
-        // if (isValidPassword) {
-        if (password == user.password) {
+        if (isValidPassword) {
+       // if (password == user.password) {
 
             // Create a JWT Token(
 
@@ -130,11 +133,11 @@ app.get("/profile", async (req, res) =>{
 
 // Get user by email
 app.get("/user", async (req, res) =>{
-    const userEmail = req.body.age;
+    const userEmail = req.body.emailId;
 
     try {
         // console.log(userEmail);
-        const user = await User.findOne({age: userEmail}); // find One user
+        const user = await User.findOne({emailId: userEmail}); // find One user
         if (!user) {
             res.status(404).send("User not Found")
             

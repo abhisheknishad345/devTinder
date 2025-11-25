@@ -28,6 +28,9 @@ let a= 10, b=4;
 console.log(Math.trunc(b/a));
 
 console.log(Function("return 2 * 10 + 3")());
+let mid = 5
+console.log(mid+mid);
+
 
 
 
