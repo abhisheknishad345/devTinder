@@ -4,10 +4,10 @@ const connectDB = require("./config/database")
 const User = require("./model/user")
 const {validateSinupData} = require('./utils/validation')
 const bcrypt = require("bcrypt");
-const { cookie } = require("express-validator");
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
 const bodyParser = require("body-parser");
+const {userAuth} = require('./middleWares/auth')
 
 const app = express()
 const port = 5700;
@@ -80,11 +80,12 @@ app.post("/login", async (req, res) =>{
 
             // Create a JWT Token(
 
-            const token =  jwt.sign({_id: user._id}, "Dev@tinder$*55");
+            const token =  jwt.sign({_id: user._id}, "Dev@tinder$*55", {expiresIn: "2m"});
             console.log("Token:",token);
 
             /// Add token to the cookie and send the response back to user
-            res.cookie("token",token)
+            res.cookie("token",token, { expires: new Date(Date.now() + 8 * 3600000)})
+            
             res.send("Login Succesfull !!");
             // console.log(object);
             
@@ -103,30 +104,29 @@ app.post("/login", async (req, res) =>{
 
 });
 
-app.get("/profile", async (req, res) =>{
-    const cookies = req.cookies;
-     const {token} = cookies; 
-     if (!token) {
-        return res.status(401).send("No token found. Please login.");
-    }
-    // Validate my token
+app.get("/profile", userAuth, async (req, res) =>{
+
     try {
-        const decodedMessage = jwt.verify(token, "Dev@tinder$*55");
-        console.log(decodedMessage);
-
-        const { _id } = decodedMessage;
-        console.log("Logged in user ID:", _id);
-        const user = await User.findById(_id)
-        res.send(user)
-        console.log(user);
-
-       // res.send("Reading Cookie"); // cookie is send back after user Login
+    const user = req.user;
+    res.send(user);
+    // res.send("Reading Cookie"); // cookie is send back after user Login
 
     } catch (err) {
-        res.status(401).send("Invalid Token: " + err.message);
+        res.status(401).send("Some error occured: " + err.message);
     }
 
      
+
+})
+
+// SendConnectionReq API
+
+app.post("/sendConnectionReq", userAuth, async(req, res) =>{
+
+    const user = req.user;
+
+    console.log("Sending a connection request");
+    res.send(user.Fname+" Send the Connection!!")
 
 })
 
