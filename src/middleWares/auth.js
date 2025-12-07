@@ -40,9 +40,9 @@ const userAuth = async(req, res, next) => {
 
      // Validate  the token
      const decodedMessage = jwt.verify(token, "Dev@tinder$*55"); 
-     console.log(decodedMessage); 
+    //  console.log(decodedMessage); 
      const { _id } = decodedMessage;
-      console.log("Logged in user ID:", _id);
+    //   console.log("Logged in user ID:", _id);
      // Find the user
      const user = await User.findById(_id)
      if (!user) {

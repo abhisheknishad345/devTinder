@@ -2,133 +2,26 @@
 const express = require("express");
 const connectDB = require("./config/database")
 const User = require("./model/user")
-const {validateSinupData} = require('./utils/validation')
-const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser')
-const jwt = require('jsonwebtoken');
 const bodyParser = require("body-parser");
-const {userAuth} = require('./middleWares/auth')
 
 const app = express()
 const port = 5700;
 
 app.use(bodyParser.json());
-app.use(express.json())
 app.use(cookieParser())
-
-
+app.use(express.json())
 /** it tell the Express app
  * Whenever a request comes with JSON data in the body, automatically parse it and convert it into a JavaScript object.”
  */
 
-app.post("/signup", async (req, res) => {
-    // Validation of data
-    validateSinupData(req)
-    const {Fname,Lname,password,emailId,age} = req.body;
-    // Encrypt the password
-    const passwordHash = await bcrypt.hash(password, 10)
-    // console.log("Hash Format: " +passwordHash);
-    // Store the data in DB
+const authRouter = require('./routes/auth')
+const profileRouter = require('./routes/profile')
+const requestRouter = require('./routes/request')
 
-    // console.log(req.body); // give "undefined", to avoid it use 'Express.json' which convert the json data in JS Object format and U will need a middleware
-
-
-    //     // Creating a new instance of User Model
-    
-    //         Fname: "JJ",
-    //         Lname: "Thomson",
-    //         emailId: "jjt533@gmail.com",
-    //         password: "thomson@165",
-    //         age: 21,
-    
-    try {
-        const userObj = new User({
-            Fname,
-            Lname,
-            password: passwordHash,
-            // password,
-            emailId, 
-            age
-        });
-
-
-        await userObj.save();
-        res.send("User Added succesfully")
-    } catch (err) {
-        res.status(404).send("ERROR: " + err)
-
-    }
-
-})
-
-// Login API
-app.post("/login", async (req, res) =>{
-
-    try {
-
-        
-        const {emailId, password} = req.body;
-        const user = await User.findOne({emailId: emailId});
-        if (!user) {
-            throw new Error("Invalid Credentials")
-            
-        }
-         const isValidPassword = await user.validatePassword(password);
-
-        if (isValidPassword) {
-       // if (password == user.password) {
-
-            // Create a JWT Token(
-            const token = user.getJWT();
-
-            console.log("Token:",token);
-
-            /// Add token to the cookie and send the response back to user
-            res.cookie("token",token, { expires: new Date(Date.now() + 8 * 3600000)})
-            
-            res.send("Login Succesfull !!");
-            // console.log(object);
-            
-        } else {
-            throw new Error("Invalid Credentials")
-
-            // 6307478432
-            
-        }
-
-    } catch (err) {
-        res.status(404).send("Login ERROR: " + err.message)
-        
-        
-    }
-
-});
-
-app.get("/profile", userAuth, async (req, res) =>{
-
-    try {
-    const user = req.user;
-    res.send(user);
-    // res.send("Reading Cookie"); // cookie is send back after user Login
-
-    } catch (err) {
-        res.status(401).send("Some error occured: " + err.message);
-    }
-
-     
-
-})
-
-// SendConnectionReq API
-
-app.post("/sendConnectionReq", userAuth, async(req, res) =>{
-
-    const user = req.user;
-
-    console.log("Sending a connection request");
-    res.send(user.Fname+" Send the Connection!!")
-
-})
+app.use("/", authRouter)
+app.use("/", profileRouter)
+app.use("/", requestRouter)
 
 
 // Get user by email
@@ -201,28 +94,6 @@ app.delete("/delete", async (req, res) =>{
     
 })
 
-
-/************ Update User API PUT*/
-app.put("/update", async (req, res) =>{
-    const updateUser = req.body.Fname;
-    const updateData = req.body.age;
-
-    try {
-        console.log(`User ${updateUser} got updated`);
-        const user = await User.findOneAndUpdate({Fname: updateUser}, {age: updateData}, {new: true})
-        // const user = await User.updateOne({Fname: updateUser}, {$set: {age: updateAge}}, {new: false})
-        // updateOne find the user which is added in past and update it
-        if (!user) {
-            res.status(404).send("User is not Found")
-        } else {
-            res.json({message: "User updated", updateUser, updateData})
-        }
-    } catch (err) {
-
-        res.status(500).send("Some error occured", err)
-        
-    }
-})
 
 /************ Update User API PUT*/
 

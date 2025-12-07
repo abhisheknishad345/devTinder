@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Name is required"],
         minLength: [3, "Name must be at least 3 characters"],
-        maxLength: 25,
+        maxLength: 10,
         trim: true,
     },
     Lname: {
@@ -44,7 +44,8 @@ const userSchema = mongoose.Schema({
         },
         age: {
             type: Number,
-            min: 18
+            min: 18,
+            max:120
         },
         gender: {
             type: String,
@@ -73,6 +74,7 @@ const userSchema = mongoose.Schema({
         },
         skills:{
             type: [String],
+            // maxLength:10
             
         },
        
