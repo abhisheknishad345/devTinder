@@ -62,3 +62,15 @@
 - set the expiry time of JWT token and cookies ALWAYS, atlast for 7 days
 - Create Schema methods to get JWT
 - Create user Schema methods to comparePassword(passwordInputByUser)
+
+Status - ignore, interested, accepted and rejected 
+ # Homework 7
+- create connection request schema
+- send connection request api
+- proper validation of data
+- Think about all corner cases
+- read about $or and $and query in mongoose
+- Read more about index in MongoDB
+- why do se need index in DB
+- What is the advantage and disadvantage of creating Index
+- read an article of Compound index from internet

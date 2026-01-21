@@ -1,7 +1,7 @@
 
 const express = require('express')
 const authRouter = express.Router()
-const { validateSinupData} = require('../utils/validation')
+const { validateSinupData } = require('../utils/validation')
 const bcrypt = require("bcrypt");
 const User = require("../model/user")
 const jwt = require('jsonwebtoken');
@@ -72,7 +72,13 @@ authRouter.post("/login", async (req, res) => {
             console.log("Token:", token);
 
             /// Add token to the cookie and send the response back to user
-            res.cookie("token", token, { expires: new Date(Date.now() + 30 * 3600000) })
+            res.cookie("token", token,
+                //  { expires: new Date(Date.now() + 30 * 60*60 * 1000) }
+                {
+                    maxAge: 30 * 60 * 60 * 1000, // 30 hours
+                    secure: true
+                }
+            )
 
             res.send("Login Succesfull !!");
             // console.log(object);

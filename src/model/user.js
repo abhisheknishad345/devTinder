@@ -49,12 +49,18 @@ const userSchema = mongoose.Schema({
         },
         gender: {
             type: String,
-            validate(value){
-                if (!["Male", "Female", "Others"].includes(value)) {
-                    throw new Error("Gender data is invalid: "+value)
+            enum:{
+                values:["Male", "Female", "Others"],
+                message:`{VALUE} is not a valid gender type`
+
+            },
+
+            // validate(value){
+            //     if (!["Male", "Female", "Others"].includes(value)) {
+            //         throw new Error("Gender data is invalid: "+value)
                     
-                }
-            }
+            //     }
+            // }
         },
         profileurl: {
             type: String,
@@ -79,10 +85,13 @@ const userSchema = mongoose.Schema({
         },
        
     },
+
     {
         timestamps: true
     }
 );
+
+userSchema.index({Fname:1, Lname:1})
 
 // get token for any user 
 userSchema.methods.getJWT = function(){
