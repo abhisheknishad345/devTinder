@@ -33,9 +33,9 @@ authRouter.post("/signup", async (req, res) => {
         const userObj = new User({
             Fname,
             Lname,
-            password: passwordHash,
-            // password,
             emailId,
+            // password: passwordHash,
+            password,
             age
         });
 
@@ -63,8 +63,8 @@ authRouter.post("/login", async (req, res) => {
         }
         const isValidPassword = await user.validatePassword(password);
 
-        if (isValidPassword) {
-            // if (password == user.password) {
+        // if (isValidPassword) {
+            if (password == user.password) {
 
             // Create a JWT Token(
             const token = user.getJWT();

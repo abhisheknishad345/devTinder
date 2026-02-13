@@ -74,3 +74,6 @@ Status - ignore, interested, accepted and rejected
 - why do se need index in DB
 - What is the advantage and disadvantage of creating Index
 - read an article of Compound index from internet
+
+- Write code with proper validation for POST
+- Thought process - POST vs GET
