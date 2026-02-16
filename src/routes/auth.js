@@ -12,7 +12,7 @@ const { userAuth } = require('../middleWares/auth');
 authRouter.post("/signup", async (req, res) => {
     // Validation of data
     validateSinupData(req)
-    const { Fname, Lname, password, emailId, age } = req.body;
+    const { Fname, Lname, password, emailId, age,gender,profileurl,skills } = req.body;
     // Encrypt the password
     const passwordHash = await bcrypt.hash(password, 10)
     // console.log("Hash Format: " +passwordHash);
@@ -34,9 +34,12 @@ authRouter.post("/signup", async (req, res) => {
             Fname,
             Lname,
             emailId,
-            // password: passwordHash,
-            password,
-            age
+            password: passwordHash,
+            // password,
+            age,
+            gender,
+            profileurl,
+            skills
         });
 
 
@@ -63,19 +66,19 @@ authRouter.post("/login", async (req, res) => {
         }
         const isValidPassword = await user.validatePassword(password);
 
-        // if (isValidPassword) {
-            if (password == user.password) {
+        if (isValidPassword) {
+            // if (password == user.password) {
 
             // Create a JWT Token(
             const token = user.getJWT();
 
-            console.log("Token:", token);
+            // console.log("Token:", token);
 
             /// Add token to the cookie and send the response back to user
             res.cookie("token", token,
                 //  { expires: new Date(Date.now() + 30 * 60*60 * 1000) }
                 {
-                    maxAge: 30 * 60 * 60 * 1000, // 30 hours
+                    maxAge: 72 * 60 * 60 * 1000, // 30 hours
                     secure: true
                 }
             )

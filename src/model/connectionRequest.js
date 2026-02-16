@@ -5,13 +5,15 @@ const connectionRequestSchema = new mongoose.Schema({
 
     fromUserId:{
         required: true,
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User"
         
     },
     
     toUserId:{
         required: true,
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User"
         
     },
     

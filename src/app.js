@@ -2,6 +2,7 @@
 const express = require("express");
 const connectDB = require("./config/database")
 const User = require("./model/user")
+// const { userAuth } = require("../middleWares/auth");
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
 
@@ -19,6 +20,7 @@ const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile')
 const requestRouter = require('./routes/request');
 const userRouter = require("./routes/user");
+const { userAuth } = require("./middleWares/auth");
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
@@ -99,7 +101,7 @@ app.delete("/delete", async (req, res) =>{
 
 /************ Update User API PUT*/
 
-app.patch("/patchupdate/:userId", async (req, res) =>{
+app.patch("/patchupdate/:userId", userAuth, async (req, res) =>{
     const userId = req.params.userId;
     const data = req.body;
 
@@ -110,6 +112,11 @@ app.patch("/patchupdate/:userId", async (req, res) =>{
     if (!isUpdateAllowed) {
         throw new Error("This update is not allowed");
         };
+
+        const toUser = await User.findById(userId);
+        if (!toUser) {
+            return res.status(400).send("User not exist")
+        }
 
         // if(data?.skills.length > 6){
         //     throw new Error("Skills cannot be more than 10")
