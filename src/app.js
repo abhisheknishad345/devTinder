@@ -5,10 +5,15 @@ const User = require("./model/user")
 // const { userAuth } = require("../middleWares/auth");
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express()
 const port = 5700;
 
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true,
+}));
 app.use(bodyParser.json());
 app.use(cookieParser())
 app.use(express.json())

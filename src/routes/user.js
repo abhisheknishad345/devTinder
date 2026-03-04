@@ -73,7 +73,7 @@ userRouter.get( "/feed", userAuth, async(req, res) =>{
         const loggedInUser = req.user;
         // Pagination
         const page = parseInt(req.query.page) || 1;
-        const limit = 3;
+        const limit = 5;
 
         const skip = (page - 1) * limit;
         

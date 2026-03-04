@@ -83,7 +83,10 @@ authRouter.post("/login", async (req, res) => {
                 }
             )
 
-            res.send("Login Succesfull !!");
+            res.json({
+                message: "Login Successfull !!",
+                data: user
+            });
             // console.log(object);
 
         } else {
