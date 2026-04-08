@@ -10,9 +10,10 @@ const { userAuth } = require('../middleWares/auth');
 // authRouter.get('/')
 
 authRouter.post("/signup", async (req, res) => {
+     console.log("🔥 Signup route hit");
     // Validation of data
     validateSinupData(req)
-    const { Fname, Lname, password, emailId, age,gender,profileurl,skills } = req.body;
+    const { Fname, Lname, password, emailId, age,gender,about,profileurl,skills } = req.body;
     // Encrypt the password
     const passwordHash = await bcrypt.hash(password, 10)
     // console.log("Hash Format: " +passwordHash);
@@ -36,6 +37,7 @@ authRouter.post("/signup", async (req, res) => {
             emailId,
             password: passwordHash,
             // password,
+            about,
             age,
             gender,
             profileurl,
@@ -46,9 +48,15 @@ authRouter.post("/signup", async (req, res) => {
         await userObj.save();
         res.send("User Added succesfully")
     } catch (err) {
-        res.status(404).send("ERROR: " + err)
+        res.status(400).json( 
+            {
+                error: emailId + " already exists, Please try with another emailId",
+                message: "Error: " + err
+            }
+        )
 
     }
+    console.log("Signup hit at End !!");
 
 })
 
@@ -76,10 +84,12 @@ authRouter.post("/login", async (req, res) => {
 
             /// Add token to the cookie and send the response back to user
             res.cookie("token", token,
-                //  { expires: new Date(Date.now() + 30 * 60*60 * 1000) }
+               
                 {
-                    maxAge: 72 * 60 * 60 * 1000, // 30 hours
-                    secure: true
+                    maxAge: 72 * 60 * 60 * 1000, // 3 Days
+                    secure: false,
+                    httpOnly: true,
+                    sameSite: "none"
                 }
             )
 
@@ -97,7 +107,7 @@ authRouter.post("/login", async (req, res) => {
         }
 
     } catch (err) {
-        res.status(404).send("Login ERROR: " + err.message)
+        res.status(404).send("Login Error: " + err.message)
 
 
     }

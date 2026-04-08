@@ -74,7 +74,6 @@ const userSchema = mongoose.Schema({
         },
         about:{
             type: String,
-            minLength:5,
             maxLength: 50,
             default: "This is default about user"
         },
@@ -96,7 +95,7 @@ userSchema.index({Fname:1, Lname:1})
 // get token for any user 
 userSchema.methods.getJWT = function(){
     const user = this;
-    const token =  jwt.sign({_id: user._id}, "Dev@tinder$*55", {expiresIn: "10m"});
+    const token =  jwt.sign({_id: user._id}, "Dev@tinder$*55", {expiresIn: "2d"});
     return token;
 }
 
