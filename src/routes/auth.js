@@ -89,7 +89,7 @@ authRouter.post("/login", async (req, res) => {
                     maxAge: 72 * 60 * 60 * 1000, // 3 Days
                     secure: false,
                     httpOnly: true,
-                    sameSite: "none"
+                   sameSite: "lax"
                 }
             )
 
