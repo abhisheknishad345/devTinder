@@ -22,7 +22,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
 // prfileUpdate API
 profileRouter.patch("/profile/update", userAuth, async (req, res) => {
 
-    console.log("Patch Hit");
+    // console.log("Patch Hit");
     try {
         if (!validateEditProfile(req)) {
             throw new Error("Invalid edit request")
@@ -39,7 +39,7 @@ profileRouter.patch("/profile/update", userAuth, async (req, res) => {
             data: loggedInUser,
         }
     )
-    console.log("Patch Hit");
+    // console.log("Patch Hit");
 
 
     } catch (err) {
