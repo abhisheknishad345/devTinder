@@ -49,18 +49,18 @@ const userSchema = mongoose.Schema({
         },
         gender: {
             type: String,
-            enum:{
-                values:["Male", "Female", "Others"],
-                message:`{VALUE} is a Invalid Gender type`
+            // enum:{
+            //     values:["Male", "Female", "Other"],
+            //     message:`{VALUE} is a Invalid Gender type`
 
-            },
+            // },
 
-            // validate(value){
-            //     if (!["Male", "Female", "Others"].includes(value)) {
-            //         throw new Error("Gender data is invalid: "+value)
+            validate(value){
+                if (!["Male", "Female", "Other"].includes(value)) {
+                    throw new Error("Gender data is invalid: "+value)
                     
-            //     }
-            // }
+                }
+            }
         },
         profileurl: {
             type: String,

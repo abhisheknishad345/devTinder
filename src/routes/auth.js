@@ -10,12 +10,12 @@ const { userAuth } = require('../middleWares/auth');
 // authRouter.get('/')
 
 authRouter.post("/signup", async (req, res) => {
-     console.log("🔥 Signup route hit");
+    //  console.log("🔥 Signup route hit");
     // Validation of data
     validateSinupData(req)
     const { Fname, Lname, password, emailId, age,gender,about,profileurl,skills } = req.body;
     // Encrypt the password
-    const passwordHash = await bcrypt.hash(password, 10)
+    const passwordHash = await bcrypt.hash(password, 5)
     // console.log("Hash Format: " +passwordHash);
     // Store the data in DB
 
@@ -56,7 +56,7 @@ authRouter.post("/signup", async (req, res) => {
         )
 
     }
-    console.log("Signup hit at End !!");
+    // console.log("Signup hit at End !!");
 
 })
 

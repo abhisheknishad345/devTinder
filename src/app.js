@@ -105,49 +105,6 @@ app.delete("/delete", async (req, res) => {
 
 })
 
-
-/************ Update User API PUT*/
-
-/* 
-app.patch("/patchupdate/:userId", userAuth, async (req, res) => {
-    const userId = req.params.userId;
-    const data = req.body;
-
-    try {
-        const Allowed_Updates = ["about", "gender", "age", "skills", "password", "profileurl"];
-
-        const isUpdateAllowed = Object.keys(data).every((k) => Allowed_Updates.includes(k))
-        if (!isUpdateAllowed) {
-            throw new Error("This update is not allowed");
-        };
-
-        const toUser = await User.findById(userId);
-        if (!toUser) {
-            return res.status(400).send("User not exist")
-        }
-
-        // if(data?.skills.length > 6){
-        //     throw new Error("Skills cannot be more than 10")
-        // }
-
-        const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-            runValidators: true,
-            // returnDocument: "before" // return old data
-            // returnDocument: "after", // return updated data
-            new: true // return updated data, without it , return old data
-        });
-        console.log("Updated:", user);
-        res.json({ message: "User updated succesfully", user })
-
-    } catch (err) {
-        res.status(500).send("Updates Failed: " + err.message)
-
-    }
-})
-
-*/
-
-
 connectDB().then(() => {
     console.log("Database is connected...");
 
