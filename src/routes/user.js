@@ -74,7 +74,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         const userId = loggedInUser._id.toString();
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 11;
+        const limit = 6;
         const skip = (page - 1) * limit;
 
         const connectionRequest = await ConnectionRequestModel.find({
@@ -91,7 +91,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
             hideUserfromFeed.add(req.toUserId.toString());
         });
 
-        // ✅ include self in hidden
+        // include self in hidden
         hideUserfromFeed.add(userId);
         
 

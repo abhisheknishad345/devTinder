@@ -28,7 +28,8 @@ const userSchema = mongoose.Schema({
         validate(value) {
            // validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
             if(!validator.isEmail(value)){
-                throw new Error("Invalid email Format"+value)
+                throw new Error("Invalid email Format",value)
+                
             }
         }
     },
@@ -64,7 +65,7 @@ const userSchema = mongoose.Schema({
         },
         profileurl: {
             type: String,
-            minLength: 10,
+            minLength: 0,
             validate(value){
                 if(!validator.isURL(value)){
                     throw new Error("Invalid URL format: " + value)
@@ -74,7 +75,7 @@ const userSchema = mongoose.Schema({
         },
         about:{
             type: String,
-            maxLength: 50,
+            maxLength: 250,
             default: "This is default about user"
         },
         skills:{
