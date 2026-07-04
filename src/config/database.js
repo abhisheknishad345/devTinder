@@ -1,15 +1,13 @@
 
 const mongoose = require('mongoose');
 
- const connectDB = async () =>{
+const connectDB = async () =>{
+   console.log(process.env.DB_SECRET_KEY);
     await mongoose.connect(
-    // "mongodb+srv://abhishekk77625_db_user:Mongo_for_node@nodemongo.i8pe3pj.mongodb.net/devTinder"
-   "mongodb://localhost:27017/devTinder"
-); 
+   
+      process.env.DB_SECRET_KEY
+    ); 
 }
 
-
-
- 
 
 module.exports = connectDB;

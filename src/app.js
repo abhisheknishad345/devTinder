@@ -3,11 +3,12 @@ const express = require("express");
 const connectDB = require("./config/database")
 const User = require("./model/user")
 const cookieParser = require('cookie-parser')
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const cors = require("cors");
-
 const app = express()
-const port = 5700;
+
+require('dotenv').config()
+const port = process.env.PORT || 5500;
 
 app.use(cors({
     origin: "http://localhost:5173",
@@ -17,9 +18,9 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.use(bodyParser.json());
-app.use(cookieParser())
 app.use(express.json())
+// app.use(bodyParser.json());
+app.use(cookieParser())
 /** it tell the Express app
  * Whenever a request comes with JSON data in the body, automatically parse it and convert it into a JavaScript object.”
  */
@@ -65,20 +66,6 @@ app.get("/user", async (req, res) => {
 
 })
 
-// Feed API - write a method so that when user signup to app then get that data and render it to UI
-app.get("/feed", async (req, res) => {
-
-    try {
-        const users = await User.find({}) // get all data of 'json'
-        res.send(users)
-    } catch (err) {
-        res.status(400).send("Something went Wrong")
-
-    }
-
-
-})
-
 /*********** Delete User API */
 app.delete("/delete", async (req, res) => {
     // const deletedUser = req.body.Lname;
@@ -105,12 +92,18 @@ app.delete("/delete", async (req, res) => {
 
 })
 
-connectDB().then(() => {
-    console.log("Database is connected...");
+app.get("/test", (req, res) => {
+    res.send("Working");
+});
 
-}).catch((err) => {
+connectDB()
+  .then(() => {
+    console.log("Database is connected...");
+  })
+  .catch((err) => {
     console.error("Database is not Connected...");
-})
+    console.error(err);
+  });
 
 
 

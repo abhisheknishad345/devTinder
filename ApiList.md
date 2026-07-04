@@ -27,3 +27,5 @@
 - GET /feed - Gets you the profile of other users on Plateform
 
 - Status: ignore, interested, accepted, rejected
+
+# Real time chat using Websocket(Socket.io)

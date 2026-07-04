@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const User = require("../model/user")
 
 const userAuth = async (req, res, next) => {
-    // ✅ OPTIONS request ko bypass karo
+    // OPTIONS request ko bypass karo
     if (req.method === "OPTIONS") {
         return next();
     }
@@ -18,7 +18,7 @@ const userAuth = async (req, res, next) => {
         }
 
         // Validate  the token
-        const decodedMessage = jwt.verify(token, "Dev@tinder$*55");
+        const decodedMessage = jwt.verify(token, process.env.SECRET_KEY);
         //  console.log(decodedMessage); 
         const { _id } = decodedMessage;
         //   console.log("Logged in user ID:", _id);
