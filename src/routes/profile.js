@@ -8,6 +8,9 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
 
     try {
     const user = req.user;
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     res.send(user);
     // res.send("Reading Cookie"); // cookie is send back after user Login
 
