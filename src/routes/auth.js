@@ -51,10 +51,10 @@ authRouter.post("/signup", async (req, res) => {
         res.cookie("token", token,
 
             {
-                expires: new Date(Date.now() + 48 * 3600000),
-                // maxAge: 48 * 60 * 60 * 1000, // 3 Days
-                // secure: false,
-                // httpOnly: true
+                expires: new Date(Date.now() + 24 * 3600000),
+                httpOnly: true,
+                secure: true,      // Essential for cross-site (HTTPS)
+                sameSite: "none"
             }
         )
 
@@ -101,10 +101,11 @@ authRouter.post("/login", async (req, res) => {
             res.cookie("token", token,
 
                 {
-                    maxAge: 72 * 60 * 60 * 1000, // 3 Days
-                    // secure: false,
-                    // httpOnly: true,
-                    
+                    expires: new Date(Date.now() + 48 * 3600000),
+                    httpOnly: true,
+                    secure: true,      // Essential for cross-site (HTTPS)
+                    sameSite: "none"
+
                 }
             )
 

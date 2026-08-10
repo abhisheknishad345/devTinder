@@ -7,9 +7,10 @@ const User = require("./model/user")
 const cookieParser = require('cookie-parser')
 const { setupWebSocket } = require("./utils/socket");
 const cors = require("cors");
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+
+// const dns = require('dns');
+// dns.setDefaultResultOrder('ipv4first');
+// dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const http = require("http");
 // const WebSocket = require("ws");
@@ -78,7 +79,7 @@ app.get("/test", (req, res) => {
 });
 
 
-connectDB()
+await connectDB()
   .then(() => {
     console.log("Database connection established...");
     server.listen(process.env.PORT, () => {
