@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Test</title>
+</head>
+<body>
+
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+<script>
+    const socket = io("http://localhost:5700");
+
+    socket.on("connect", () => {
+        console.log("Connected");
+    });
+
+    socket.on("welcome", (msg) => {
+        console.log("WELCOME:", msg);
+    });
+
+    socket.on("message", (msg) => {
+        console.log("MESSAGE:", msg);
+    });
+</script>
+
+</body>
+</html>

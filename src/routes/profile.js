@@ -20,7 +20,8 @@ profileRouter.get("/profile/view", userAuth, async (req, res) =>{
 })
 
 // prfileUpdate API
-profileRouter.patch("/profile/update", userAuth, async (req, res) => {
+profileRouter.put("/profile/update", userAuth, async (req, res) => {
+    //  res.send("PATCH is working");
 
     // console.log("Patch Hit");
     try {

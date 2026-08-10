@@ -22,27 +22,25 @@ authRouter.post("/signup", async (req, res) => {
     // console.log(req.body); // give "undefined", to avoid it use 'Express.json' which convert the json data in JS Object format and U will need a middleware
 
 
-    //     // Creating a new instance of User Model
-
-    //         Fname: "JJ",
-    //         Lname: "Thomson",
-    //         emailId: "jjt533@gmail.com",
-    //         password: "thomson@165",
-    //         age: 21,
-
     try {
         const userObj = new User({
             Fname,
             Lname,
             emailId,
             password: passwordHash,
-            // password, // plain password
             about,
             age,
             gender,
-             profileurl,
-             skills
+            profileurl,
+            skills
         });
+
+        const existingUser = await User.findOne({ emailId });
+        if (existingUser) {
+            return res.status(400).json({
+                message: 'An account with this email already exists.'
+            });
+        }
 
         const savedUser = await userObj.save();
         const token = savedUser.getJWT();
@@ -53,10 +51,9 @@ authRouter.post("/signup", async (req, res) => {
         res.cookie("token", token,
 
             {
-                expires:new Date(Date.now() + 48 * 3600000),
+                expires: new Date(Date.now() + 48 * 3600000),
                 // maxAge: 48 * 60 * 60 * 1000, // 3 Days
                 secure: false,
-                httpOnly: true,
                 sameSite: "lax"
             }
         )
@@ -120,7 +117,7 @@ authRouter.post("/login", async (req, res) => {
         } else {
             throw new Error("Invalid Credentials")
 
-        
+
 
         }
 

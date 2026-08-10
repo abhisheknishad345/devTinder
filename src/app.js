@@ -1,25 +1,36 @@
 
 const express = require("express");
+const app = express()
+
 const connectDB = require("./config/database")
 const User = require("./model/user")
 const cookieParser = require('cookie-parser')
-// const bodyParser = require("body-parser");
+const { setupWebSocket } = require("./utils/socket");
 const cors = require("cors");
-const app = express()
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
+const http = require("http");
+// const WebSocket = require("ws");
+const { Server } = require("socket.io");
 
 require('dotenv').config()
 const port = process.env.PORT || 5500;
 
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Use an array
-    optionsSuccessStatus: 200,
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow request from frontend
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Explicitly allow PATCH
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Enable 
+};
+
+app.use(cors(corsOptions));
+
+// Handle Preflight Requests 
+
 
 app.use(express.json())
-// app.use(bodyParser.json());
 app.use(cookieParser())
 /** it tell the Express app
  * Whenever a request comes with JSON data in the body, automatically parse it and convert it into a JavaScript object.”
@@ -29,11 +40,15 @@ const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile')
 const requestRouter = require('./routes/request');
 const userRouter = require("./routes/user");
-const userAuth = require("./middleWares/auth")
+const userAuth = require("./middleWares/auth");
+
 app.use("/", authRouter)
 app.use("/", profileRouter)
 app.use("/", requestRouter)
 app.use("/", userRouter)
+
+const server = http.createServer(app);
+setupWebSocket(server) // call the web-socket
 
 
 // Get user by email
@@ -50,14 +65,6 @@ app.get("/user", async (req, res) => {
 
             res.send(user)
         }
-        //   const users = await User.find({emailId: userEmail});
-        //   if(users.length ===0){
-
-        //       res.status(404).send("User not Found");
-        //   } else {
-
-        //       res.send(users)
-        //   }
 
     } catch (err) {
         res.status(400).send("Something went Wrong");
@@ -66,49 +73,18 @@ app.get("/user", async (req, res) => {
 
 })
 
-/*********** Delete User API */
-app.delete("/delete", async (req, res) => {
-    // const deletedUser = req.body.Lname;
-    const userId = req.body.userId;
-
-    try {
-
-        console.log("Deleted:", userId);
-        // const user = await User.findOneAndDelete({ Lname: deletedUser });
-        const user = await User.findByIdAndDelete({ _id: userId }); // it work
-        if (!user) {
-            res.status(404).send("User not Exist")
-
-        } else {
-            // res.send("User deleted" ,deletedUser)
-            res.json({ message: "User deleted successfully", userId });
-
-        }
-
-    } catch (err) {
-        res.status(500).send("Some error occured", err);
-
-    }
-
-})
-
 app.get("/test", (req, res) => {
-    res.send("Working");
+    res.send("Working Fine");
 });
+
 
 connectDB()
   .then(() => {
-    console.log("Database is connected...");
+    console.log("Database connection established...");
+    server.listen(process.env.PORT, () => {
+      console.log("Server is successfully listening on port 5700...");
+    });
   })
   .catch((err) => {
-    console.error("Database is not Connected...");
-    console.error(err);
+    console.error("Database cannot be connected!!");
   });
-
-
-
-app.listen(port, () => {
-    console.log("Server is succesfully listening.. at port", port);
-
-
-});

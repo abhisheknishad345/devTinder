@@ -21,10 +21,10 @@ const userSchema = mongoose.Schema({
     },
     emailId: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         unique: true,
         lowercase: true,
-        // trim: true,
+        trim: true,
         validate(value) {
            // validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
             if(!validator.isEmail(value)){
