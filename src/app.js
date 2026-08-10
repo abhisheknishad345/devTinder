@@ -79,7 +79,7 @@ app.get("/test", (req, res) => {
 });
 
 
-await connectDB()
+connectDB()
   .then(() => {
     console.log("Database connection established...");
     server.listen(process.env.PORT, () => {
