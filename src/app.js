@@ -19,7 +19,7 @@ require('dotenv').config()
 const port = process.env.PORT || 5500;
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow request from frontend
+  origin: ['http://localhost:5173', "https://devloper-tinder.vercel.app/"], // Allow request from frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Explicitly allow PATCH
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Enable 
