@@ -35,7 +35,7 @@ It provides REST APIs for authentication, profile management, developer discover
 | dotenv | Environment configuration |
 | Nodemon | Development |
 
-The repository's `package.json` defines the current dependencies and `dev`/`start` scripts. citeturn1view0
+The repository's `package.json` defines the current dependencies and `dev`/`start` scripts.
 
 ## Project Structure
 
@@ -63,7 +63,7 @@ devTinder/
 └── package-lock.json
 ```
 
-The current repository organizes backend code into config, middleware, models, routes and utilities under `src`. citeturn1view1turn3view0turn3view1turn3view2
+The current repository organizes backend code into config, middleware, models, routes and utilities under `src`.
 
 ## API Reference
 
@@ -101,7 +101,7 @@ The current repository organizes backend code into config, middleware, models, r
 | GET | `/user/connections` | Get connections |
 | GET | `/feed` | Get developer profiles |
 
-These endpoints are based on the repository's current `ApiList.md`. citeturn2view0
+These endpoints are based on the repository's current `ApiList.md`.
 
 ## Real-Time Chat
 
@@ -121,7 +121,7 @@ User B
   └── messageReceived
 ```
 
-The backend generates a private room ID from the two user IDs using SHA-256. Users join rooms through `joinChat`, and messages are emitted through `sendMessage` and received through `messageReceived`. citeturn6view0
+The backend generates a private room ID from the two user IDs using SHA-256. Users join rooms through `joinChat`, and messages are emitted through `sendMessage` and received through `messageReceived`.
 
 ## Authentication Flow
 
@@ -145,7 +145,7 @@ Verify JWT
 Identify logged-in user
 ```
 
-The authentication routes use bcrypt and JWT, while the authentication middleware reads the token from cookies and verifies it with `SECRET_KEY`. citeturn5view0turn5view1
+The authentication routes use bcrypt and JWT, while the authentication middleware reads the token from cookies and verifies it with `SECRET_KEY`.
 
 ## Getting Started
 
@@ -170,7 +170,7 @@ SECRET_KEY=your_jwt_secret
 PORT=5500
 ```
 
-`DB_URL` is used for the MongoDB connection and `SECRET_KEY` is used for JWT verification. citeturn4view0turn5view1
+`DB_URL` is used for the MongoDB connection and `SECRET_KEY` is used for JWT verification.
 
 > Never commit real database credentials or secrets to GitHub.
 
@@ -195,7 +195,7 @@ MongoDB is accessed through Mongoose. The backend currently contains models for:
 - Users
 - Connection requests
 
-The database connection reads its MongoDB URI from `DB_URL`. citeturn4view0turn3view2
+The database connection reads its MongoDB URI from `DB_URL`.
 
 ## Backend Architecture
 
@@ -264,4 +264,4 @@ GitHub: https://github.com/abhisheknishad345
 
 ## License
 
-ISC License. citeturn1view0
+This project is for educational and portfolio purposes.
