@@ -8,9 +8,9 @@ const cookieParser = require('cookie-parser')
 const { setupWebSocket } = require("./utils/socket");
 const cors = require("cors");
 
-// const dns = require('dns');
-// dns.setDefaultResultOrder('ipv4first');
-// dns.setServers(['8.8.8.8', '8.8.4.4']);
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const http = require("http");
 // const WebSocket = require("ws");
@@ -20,7 +20,7 @@ require('dotenv').config()
 const port = process.env.PORT || 5500;
 
 const corsOptions = {
-  origin: ["https://devloper-tinder.vercel.app"], // Allow request from frontend
+  origin: ["https://devloper-tinder.vercel.app" || "http://localhost:5173"], // Allow request from frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Explicitly allow PATCH
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Enable 

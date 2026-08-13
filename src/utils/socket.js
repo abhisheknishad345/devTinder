@@ -1,8 +1,22 @@
 
-const { Server } = require("socket.io");
+
+const socket = require("socket.io");
+const crypto = require("crypto")
+
+const getSecretRoomid = (userId, targetUserId) =>{
+
+       return crypto
+        .createHash('sha256')
+        .update([userId, targetUserId].sort().join("_"))
+        .digest('hex');
+    } 
+
 
 const setupWebSocket = (server) => {
-    const io = new Server(server, {
+
+    
+        
+    const io = socket(server, {
         cors: {
             origin: "http://localhost:5173"
 
@@ -10,22 +24,27 @@ const setupWebSocket = (server) => {
     });
 
     io.on("connection", (socket) => {
-        console.log("Client connected:", socket.id);
+        // console.log("Client connected:", socket.id);
+        socket.on("joinChat", ({ Fname, userId, targetUserId }) => {
+            const roomId = getSecretRoomid(userId, targetUserId)
+            // console.log(Fname + " Joining Room: " + roomId);
+            socket.join(roomId)
+        })
 
-        // Send a welcome event
-        socket.emit("welcome", "Welcome!");
 
         // Listen for a custom event from the client
-        socket.on("sendMessage", (message) => {
-            console.log("Received:", message.toString());
+        socket.on("sendMessage", ({ Fname, userId, targetUserId, text }) => {
+            const roomId = getSecretRoomid(userId, targetUserId)
+            //  console.log(Fname + " " + text);
+            io.to(roomId).emit("messageReceived", { Fname, text })
 
-            // Send a response back to client
-            socket.emit("message", "Message received!");
+
+
         });
 
         // Disconnect event
         socket.on("disconnect", (reason) => {
-            console.log(`Client disconnected: ${socket.id}`);
+            //console.log(`Client disconnected: ${socket.id}`);
         });
     });
 };

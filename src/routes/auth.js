@@ -4,6 +4,7 @@ const authRouter = express.Router()
 const { validateSinupData } = require('../utils/validation')
 const bcrypt = require("bcrypt");
 const User = require("../model/user")
+const ConnectionRequestModel = require('../model/connectionRequest')
 const jwt = require('jsonwebtoken');
 const { userAuth } = require('../middleWares/auth');
 
@@ -60,15 +61,8 @@ authRouter.post("/signup", async (req, res) => {
 
         res.json({ message: "User Added succesfully", data: savedUser })
     } catch (err) {
-        if (err.code === 11000) {
-            return res.status(400).json({
-                error: "Email already exists use other",
-                field: "emailId", // helpful for frontend
-            });
-        }
 
-        // other errors
-        res.status(400).json({ error: "Something went wrong" });
+        return res.status(400).json({ error: err.message });
 
     }
     // console.log("Signup hit at End !!");
@@ -137,7 +131,7 @@ authRouter.post("/logout", userAuth, async (req, res) => {
         res.cookie("token", null, {
             expires: new Date(Date.now()),
             httpOnly: true,
-            secure: true,            
+            secure: true,
             sameSite: "none",
         })
         res.status(200).json({ message: "Logout successful!" });
@@ -148,6 +142,39 @@ authRouter.post("/logout", userAuth, async (req, res) => {
 
 
 })
+
+
+authRouter.delete("/user/delete", userAuth, async (req, res) => {
+
+    const { toUserId, fromUserId } = req.params
+    try {
+        const loggedInUser = req.user;
+
+        // 1. Database se user delete 
+      await Promise.all([
+        User.findByIdAndDelete(loggedInUser._id),
+
+        ConnectionRequestModel.deleteMany({
+            $or: [{ fromUserId: loggedInUser }, { toUserId: loggedInUser }],
+        })
+
+        ])
+
+
+// 2. Cookie / Token clear
+res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+});
+
+
+res.status(200).json({ message: "Account deleted successful!" });
+    } catch (err) {
+    res.status(400).json({ message: "ERROR: " + err.message });
+}
+});
 
 
 
