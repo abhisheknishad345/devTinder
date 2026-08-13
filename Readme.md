@@ -186,7 +186,7 @@ npm run dev
 npm start
 ```
 
-The repository currently defines `npm run dev` with Nodemon and `npm start` with Node. citeturn1view0
+The repository currently defines `npm run dev` with Nodemon and `npm start` with Node.
 
 ## Database
 
