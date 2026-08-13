@@ -1,81 +1,267 @@
-# Dev Tinder - MERN Stack
-- Building a developer networking platform using React, Node.js, Express, and MongoDB.
- 
-# Initialize git
-- .gitignore
-- Create a remote repo on github
-- Push all code to remote origin
-- Play with routes and route extensions ex: /hello
-- Order of the routes matter(be serious)
-# Day 1
-- Write logic for handle GET, POST, DELETE, PATCH API Calls and test them on Postman
-- Explore routing and use of ?,+,(),* in the routes
-- Use of regex in routes /a/, /.*fly$/
-- Read the query params in the routes
-- Read the dynamic routes
+# DevTinder Backend
 
+Backend service for **DevTinder**, a developer networking platform built with **Node.js, Express.js and MongoDB**.
 
-# Git commit and push Command
-- git add .
-- git commit -m "Message"
-- git push -u origin main
+It provides REST APIs for authentication, profile management, developer discovery, connection requests, and real-time chat using Socket.IO.
 
-# Day 2
-- Multiple routes handler - Play with the code
-- next()
-- next function and errors along with the res.send()
-- app.use("/route", rH, [rH2, rH3, rH4])
+## Features
 
-# Day 3
-- What is middleware? Why do we need it?
-- How express JS basically handle the request behind the scene
-- Difference b/w app.use and app.all
-- Write a dummy auth middleware for Admin
-- Write a dummy auth middleware for all user routes, except /user/login
-- Write code to handle the error
+- 🔐 JWT-based authentication with HTTP-only cookies
+- 🔑 Secure password hashing with bcrypt
+- 👤 Developer profile management
+- 🤝 Connection requests: interested, ignored, accepted and rejected
+- 🧑‍💻 Developer feed and connections
+- 💬 Real-time private chat with Socket.IO
+- ✅ Request validation with express-validator
+- 🛡️ Authentication middleware for protected routes
+- 🍪 Cookie-based session handling
+- 🌍 CORS configuration
+- ⚙️ Environment variables with dotenv
 
-# Day 4
-- Explore schematype options from the documentaion
-- and required, lowercase, uppercase, min, max, trim
-- Add default
-- Create a custom validate function for gender
-- Improve the DB schema - PUT all appropriate validation on each field in Schema
-- and Timestamp to Schema
-- Add API level validation on Patch request and Signup post api
-- Data sanitization - Add API validation for each fields
+## Tech Stack
 
-# Never Trust 'req.body'
+| Technology | Purpose |
+|---|---|
+| Node.js | JavaScript runtime |
+| Express.js | REST API framework |
+| MongoDB | Database |
+| Mongoose | MongoDB ODM |
+| JWT | Authentication |
+| bcrypt | Password hashing |
+| Socket.IO | Real-time chat |
+| express-validator | Request validation |
+| cookie-parser | Cookie handling |
+| CORS | Cross-origin requests |
+| dotenv | Environment configuration |
+| Nodemon | Development |
 
-# Day 5
-- Validate data in signup API
-- Install bcrypt package
-- Create PasswordHash using bcrypt.hash and save the user is encrypted password
-- Create login api
-- Compare password and throw error if email or password is Invalid
-# Day 6
-- istall cookie parser
-- just send a dummy cookie to user
-- Create GET /profile api and check  if you get cookie back
-- Install jsonwebtoken
-- In Login api, after email and password validation, create a JWT token and send it to user in cookie
-- read the cookie inside your profile API and find the logged in user
-- userAuth middleware
-- Add the userAuth middleware in profile API and a new sendConnectionRequest
-- set the expiry time of JWT token and cookies ALWAYS, atlast for 7 days
-- Create Schema methods to get JWT
-- Create user Schema methods to comparePassword(passwordInputByUser)
+The repository's `package.json` defines the current dependencies and `dev`/`start` scripts. citeturn1view0
 
-Status - ignore, interested, accepted and rejected 
- # Day 7
-- create connection request schema
-- send connection request api
-- proper validation of data
-- Think about all corner cases
-- read about $or and $and query in mongoose
-- Read more about index in MongoDB
-- why do se need index in DB
-- What is the advantage and disadvantage of creating Index
-- read an article of Compound index from internet
+## Project Structure
 
-- Write code with proper validation for POST
-- Thought process - POST vs GET
+```text
+devTinder/
+├── src/
+│   ├── config/
+│   │   └── database.js
+│   ├── middleWares/
+│   │   └── auth.js
+│   ├── model/
+│   │   ├── user.js
+│   │   └── connectionRequest.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── profile.js
+│   │   ├── request.js
+│   │   └── user.js
+│   ├── utils/
+│   │   ├── socket.js
+│   │   └── validation.js
+│   └── app.js
+├── ApiList.md
+├── package.json
+└── package-lock.json
+```
+
+The current repository organizes backend code into config, middleware, models, routes and utilities under `src`. citeturn1view1turn3view0turn3view1turn3view2
+
+## API Reference
+
+### Authentication
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/signup` | Create a new account |
+| POST | `/login` | Authenticate a user |
+| POST | `/logout` | Logout the authenticated user |
+
+### Profile
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/profile/view` | Get authenticated user's profile |
+| PATCH | `/updateProfile` | Update profile |
+| PATCH | `/profile/password` | Update password |
+
+### Connection Requests
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/request/send/interested/:userId` | Send interested request |
+| POST | `/request/send/ignored/:userId` | Ignore a developer |
+| POST | `/request/send/accepted/:requestId` | Accept a request |
+| POST | `/request/send/rejected/:requestId` | Reject a request |
+| POST | `/request/review/:status/:requestId` | Review a request |
+
+### Users
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/user/requests` | Get received requests |
+| GET | `/user/connections` | Get connections |
+| GET | `/feed` | Get developer profiles |
+
+These endpoints are based on the repository's current `ApiList.md`. citeturn2view0
+
+## Real-Time Chat
+
+Socket.IO powers the real-time chat system.
+
+```text
+User A
+  │
+  │ sendMessage
+  ▼
+Socket.IO Server
+  │
+  │ private room
+  ▼
+User B
+  │
+  └── messageReceived
+```
+
+The backend generates a private room ID from the two user IDs using SHA-256. Users join rooms through `joinChat`, and messages are emitted through `sendMessage` and received through `messageReceived`. citeturn6view0
+
+## Authentication Flow
+
+```text
+Signup / Login
+      ↓
+Validate credentials
+      ↓
+Hash / verify password
+      ↓
+Generate JWT
+      ↓
+HTTP-only cookie
+      ↓
+Protected API request
+      ↓
+Auth middleware
+      ↓
+Verify JWT
+      ↓
+Identify logged-in user
+```
+
+The authentication routes use bcrypt and JWT, while the authentication middleware reads the token from cookies and verifies it with `SECRET_KEY`. citeturn5view0turn5view1
+
+## Getting Started
+
+### 1. Clone
+
+```bash
+git clone https://github.com/abhisheknishad345/devTinder.git
+cd devTinder
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Create `.env`
+
+```env
+DB_URL=your_mongodb_connection_string
+SECRET_KEY=your_jwt_secret
+PORT=5500
+```
+
+`DB_URL` is used for the MongoDB connection and `SECRET_KEY` is used for JWT verification. citeturn4view0turn5view1
+
+> Never commit real database credentials or secrets to GitHub.
+
+### 4. Development
+
+```bash
+npm run dev
+```
+
+### 5. Production
+
+```bash
+npm start
+```
+
+The repository currently defines `npm run dev` with Nodemon and `npm start` with Node. citeturn1view0
+
+## Database
+
+MongoDB is accessed through Mongoose. The backend currently contains models for:
+
+- Users
+- Connection requests
+
+The database connection reads its MongoDB URI from `DB_URL`. citeturn4view0turn3view2
+
+## Backend Architecture
+
+```text
+React Frontend
+      │
+      │ REST API
+      ▼
+Express.js
+      │
+      ├── Auth Routes
+      ├── Profile Routes
+      ├── Request Routes
+      └── User Routes
+              │
+              ▼
+      Authentication Middleware
+              │
+              ▼
+          Mongoose
+              │
+              ▼
+           MongoDB
+
+Socket.IO
+    │
+    ▼
+Real-Time Chat
+```
+
+## API Testing
+
+You can test the REST APIs with **Postman**.
+
+Recommended flow:
+
+```text
+Signup
+  ↓
+Login
+  ↓
+Profile
+  ↓
+Developer Feed
+  ↓
+Connection Request
+  ↓
+Accept / Reject
+  ↓
+Real-Time Chat
+```
+
+## Documentation
+
+- [`ApiList.md`](./ApiList.md) — API endpoint list
+- [`src/routes`](./src/routes) — Route handlers
+- [`src/model`](./src/model) — Database models
+- [`src/middleWares`](./src/middleWares) — Authentication middleware
+- [`src/utils/socket.js`](./src/utils/socket.js) — Socket.IO implementation
+
+## Author
+
+**Abhishek Nishad**
+
+GitHub: https://github.com/abhisheknishad345
+
+## License
+
+ISC License. citeturn1view0
