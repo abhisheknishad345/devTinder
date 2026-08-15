@@ -50,11 +50,6 @@ const userSchema = mongoose.Schema({
         },
         gender: {
             type: String,
-            // enum:{
-            //     values:["Male", "Female", "Other"],
-            //     message:`{VALUE} is a Invalid Gender type`
-
-            // },
 
             validate(value){
                 if (!["Male", "Female", "Other"].includes(value)) {
@@ -80,7 +75,7 @@ const userSchema = mongoose.Schema({
         },
         skills:{
             type: [String],
-            // maxLength:10
+            
             
         },
        
