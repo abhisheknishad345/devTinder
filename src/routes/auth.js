@@ -147,33 +147,43 @@ authRouter.post("/logout", userAuth, async (req, res) => {
 authRouter.delete("/user/delete", userAuth, async (req, res) => {
 
     const { toUserId, fromUserId } = req.params
+    const { password } = req.body;
     try {
         const loggedInUser = req.user;
+        const isCorrectPassword = await loggedInUser.validatePassword(password);
+
+
+        if (!isCorrectPassword) {
+            return res.status(401).json({
+                message: "Password is incorrect"
+            });
+        }
 
         // 1. Database se user delete 
-      await Promise.all([
-        User.findByIdAndDelete(loggedInUser._id),
+        await Promise.all([
 
-        ConnectionRequestModel.deleteMany({
-            $or: [{ fromUserId: loggedInUser }, { toUserId: loggedInUser }],
-        })
+            User.findByIdAndDelete(loggedInUser._id),
+
+            ConnectionRequestModel.deleteMany({
+                $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+            })
 
         ])
 
+        // 2. Cookie / Token clear
+        res.cookie("token", null, {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        });
 
-// 2. Cookie / Token clear
-res.cookie("token", null, {
-    expires: new Date(Date.now()),
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-});
+        res.status(200).json({ message: "Account deleted successful!" });
 
 
-res.status(200).json({ message: "Account deleted successful!" });
     } catch (err) {
-    res.status(400).json({ message: "ERROR: " + err.message });
-}
+        res.status(400).json({ message: "ERROR: " + err.message });
+    }
 });
 
 
