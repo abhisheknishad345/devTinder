@@ -55,11 +55,11 @@ setupWebSocket(server) // call the web-socket
 
 // Get user by email
 app.get("/user", async (req, res) => {
-    const userEmail = req.body.emailId;
+    const userEmail = req.emailId;
 
     try {
         // console.log(userEmail);
-        const user = await User.findOne({ userEmail }); // find One user
+        const user = await User.findOne({ userEmail}); // find One user
         if (!user) {
             res.status(404).send("User not Found")
 
@@ -76,7 +76,14 @@ app.get("/user", async (req, res) => {
 })
 
 app.get("/test", (req, res) => {
-    res.send("Working Fine");
+    res.send("Server is Working Fine");
+});
+
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "DevTinder server is healthy"
+    });
 });
 
 
