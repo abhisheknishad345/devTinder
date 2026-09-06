@@ -10,7 +10,7 @@ const validateSinupData = (req) => {
         throw new Error("Name is not valid")
         
     } else if (Fname.length < 3 || Lname.length > 50) {
-        throw new Error("Firstname is 4-50 character")
+        throw new Error("First_Name is between 4-50 character")
         
     } else if (!validator.isEmail(emailId)) {
         
@@ -18,7 +18,7 @@ const validateSinupData = (req) => {
         
     } else if (!validator.isStrongPassword(password)) {
         
-        throw new Error("Password is weak, enter strong one")
+        throw new Error("Password is weak, enter strong with 8+ char")
     }
 
 }
