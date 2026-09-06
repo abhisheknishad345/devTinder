@@ -1,6 +1,8 @@
 
 const express = require("express");
 const app = express()
+const { GoogleGenAI } = require("@google/genai");
+
 
 const connectDB = require("./config/database")
 const User = require("./model/user")
@@ -13,15 +15,13 @@ dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const http = require("http");
-// const WebSocket = require("ws");
-const { Server } = require("socket.io");
 
 require('dotenv').config()
 const port = process.env.PORT || 5500;
 
 const corsOptions = {
   origin: "https://devloper-tinder.vercel.app",
-  // origin: "http://localhost:5173", // Allow request from frontend
+//   origin: "http://localhost:5173", // Allow request from frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Explicitly allow PATCH
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Enable 
@@ -42,12 +42,13 @@ const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile')
 const requestRouter = require('./routes/request');
 const userRouter = require("./routes/user");
-const userAuth = require("./middleWares/auth");
+const chatRouter = require("./routes/chat");
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
 app.use("/", requestRouter)
 app.use("/", userRouter)
+app.use("/", chatRouter)
 
 const server = http.createServer(app);
 setupWebSocket(server) // call the web-socket
@@ -55,18 +56,18 @@ setupWebSocket(server) // call the web-socket
 
 // Get user by email
 app.get("/user", async (req, res) => {
-    const userEmail = req.emailId;
+    const userEmail = req.body.emailId;
 
     try {
-        // console.log(userEmail);
-        const user = await User.findOne({ userEmail}); // find One user
+        
+        const user = await User.findOne({emailId: userEmail}).select("Fname Lname age gender about skills -_id"); // find One user
+
         if (!user) {
-            res.status(404).send("User not Found")
+          return  res.status(404).send("User not Found")
 
-        } else {
+        } 
 
-            res.send(user)
-        }
+        res.send(user)
 
     } catch (err) {
         res.status(400).send("Something went Wrong");
@@ -85,6 +86,35 @@ app.get("/health", (req, res) => {
         message: "DevTinder server is healthy"
     });
 });
+
+// Google gemini api test
+
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+});
+
+app.get( "/gemini-test", async (req, res) => {
+
+    const {problem} = req.body;
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-3.5-flash-lite",
+            contents: problem
+        });
+
+
+        res.json({
+            answer: response.text
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: "Gemini API failed"
+        });
+    }
+});
+
 
 
 connectDB()

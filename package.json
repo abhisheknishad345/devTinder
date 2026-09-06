@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "description": "tinder for devlops",
   "main": "src/app.js",
- 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js",
     "start": "node src/app.js"
-    
   },
   "keywords": [
     "nodejs",
@@ -17,6 +15,7 @@
   "author": "Abhishek",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^2.19.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.1",
     "cookie-parser": "^1.4.7",
