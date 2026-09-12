@@ -1,7 +1,5 @@
 
-
 const validator = require("validator")
-
 
 const validateSinupData = (req) => {
     const {Fname, Lname, emailId, password} = req.body;

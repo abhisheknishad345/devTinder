@@ -11,7 +11,6 @@ const { userAuth } = require('../middleWares/auth');
 // authRouter.get('/')
 
 authRouter.post("/signup", async (req, res) => {
-    //  console.log("🔥 Signup route hit");
     // Validation of data
     validateSinupData(req)
     const { Fname, Lname, password, emailId, age, gender, about, profileurl, skills } = req.body;
@@ -19,9 +18,6 @@ authRouter.post("/signup", async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10)
     // console.log("Hash Format: " +passwordHash);
     // Store the data in DB
-
-    // console.log(req.body); // give "undefined", to avoid it use 'Express.json' which convert the json data in JS Object format and U will need a middleware
-
 
     try {
         const userObj = new User({
