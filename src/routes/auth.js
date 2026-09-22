@@ -5,7 +5,6 @@ const { validateSinupData } = require('../utils/validation')
 const bcrypt = require("bcrypt");
 const User = require("../model/user")
 const ConnectionRequestModel = require('../model/connectionRequest')
-const jwt = require('jsonwebtoken');
 const { userAuth } = require('../middleWares/auth');
 
 // authRouter.get('/')
@@ -72,7 +71,8 @@ authRouter.post("/login", async (req, res) => {
 
 
         const { emailId, password } = req.body;
-        const user = await User.findOne({ emailId: emailId });
+        const user = await User.findOne({ emailId: emailId })
+        
         if (!user) {
             throw new Error("Invalid Credentials")
 
