@@ -2,29 +2,29 @@
 const validator = require("validator")
 
 const validateSinupData = (req) => {
-    const {Fname, Lname, emailId, password} = req.body;
+    const { Fname, Lname, emailId, password } = req.body;
 
     if (!Fname || !Lname) {
         throw new Error("Name is not valid")
-        
+
     } else if (Fname.length < 3 || Lname.length > 50) {
         throw new Error("First_Name is between 4-50 character")
-        
+
     } else if (!validator.isEmail(emailId)) {
-        
+
         throw new Error("Email is Invalid ")
-        
+
     } else if (!validator.isStrongPassword(password)) {
-        
+
         throw new Error("Password is weak, enter strong with 8+ char")
     }
 
 }
 
-const validateEditProfile =( req )=>{
+const validateEditProfile = (req) => {
     const isAllowedEditFields = ["Fname", "Lname", "age", "about", "gender", "skills", "password", "profileurl"]
 
- const isEditAllowed =    Object.keys(req.body).every((field) => 
+    const isEditAllowed = Object.keys(req.body).every((field) =>
         isAllowedEditFields.includes(field)
     )
 
@@ -33,7 +33,19 @@ const validateEditProfile =( req )=>{
 
 }
 
+const validatePassword = (req) => {
+
+    const { newPassword } = req.body
+    if (!validator.isStrongPassword(newPassword)) {
+
+        throw new Error("Password is weak, enter strong with 8+ char")
+    }
+
+
+}
+
 module.exports = {
     validateSinupData,
-    validateEditProfile
+    validateEditProfile,
+    validatePassword
 }

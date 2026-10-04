@@ -8,6 +8,7 @@ const User = require("./model/user")
 const cookieParser = require('cookie-parser')
 const { setupWebSocket } = require("./utils/socket");
 const cors = require("cors");
+const { generalLimiter } = require("./middleWares/rateLimiter");
 
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
@@ -42,11 +43,11 @@ const chatRouter = require("./routes/chat");
 const postRouter = require("./routes/post")
 
 app.use("/", authRouter)
-app.use("/", profileRouter)
-app.use("/", requestRouter)
-app.use("/", userRouter)
-app.use("/", chatRouter)
-app.use("/", postRouter)
+app.use("/", generalLimiter, profileRouter)
+app.use("/", generalLimiter, requestRouter)
+app.use("/", generalLimiter, userRouter)
+app.use("/", generalLimiter, chatRouter)
+app.use("/", generalLimiter, postRouter)
 
 const server = http.createServer(app);
 setupWebSocket(server) // call the web-socket

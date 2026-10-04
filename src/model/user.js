@@ -27,77 +27,82 @@ const userSchema = mongoose.Schema({
         lowercase: true,
         trim: true,
         validate(value) {
-           // validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-            if(!validator.isEmail(value)){
-                throw new Error("Invalid email Format",value)
-                
+            // validator: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+            if (!validator.isEmail(value)) {
+                throw new Error("Invalid email Format", value)
+
             }
         }
     },
-        password: {
-            type: String,
-            required: true,
-            validate(value){
-                if(!validator.isStrongPassword(value)){
-                    throw new Error("Enter a strong password: " + value)
-                }
 
-            }
-        },
-        age: {
-            type: Number,
-            min: 18,
-            max:120
-        },
-        gender: {
-            type: String,
-
-            validate(value){
-                if (!["Male", "Female", "Other"].includes(value)) {
-                    throw new Error("Gender data is invalid: "+value)
-                    
-                }
-            }
-        },
-        profileurl: {
-            type: String,
-            minLength: 0,
-            validate(value){
-                if(!validator.isURL(value)){
-                    throw new Error("Invalid URL format: " + value)
-                }
-
-            }
-        },
-        about:{
-            type: String,
-            maxLength: 250,
-            default: "This is default about user"
-        },
-        skills:{
-            type: [String],
-            
-            
-        },
-       
+    emailVerified: {
+        type: Boolean,
+        default: false
     },
+    password: {
+        type: String,
+        required: true,
+        validate(value) {
+            if (!validator.isStrongPassword(value)) {
+                throw new Error("Enter a strong password: " + value)
+            }
+
+        }
+    },
+    age: {
+        type: Number,
+        min: 18,
+        max: 120
+    },
+    gender: {
+        type: String,
+
+        validate(value) {
+            if (!["Male", "Female", "Other"].includes(value)) {
+                throw new Error("Gender data is invalid: " + value)
+
+            }
+        }
+    },
+    profileurl: {
+        type: String,
+        minLength: 0,
+        validate(value) {
+            if (!validator.isURL(value)) {
+                throw new Error("Invalid URL format: " + value)
+            }
+
+        }
+    },
+    about: {
+        type: String,
+        maxLength: 250,
+        default: "This is default about user"
+    },
+    skills: {
+        type: [String],
+
+
+    },
+
+},
 
     {
         timestamps: true
     }
 );
 
-userSchema.index({Fname:1, Lname:1})
+userSchema.index({ Fname: 1, Lname: 1 })
 
 // get token for any user 
-userSchema.methods.getJWT = function(){
+userSchema.methods.getJWT = function () {
     const user = this;
-    const token =  jwt.sign({_id: user._id}, process.env.SECRET_KEY, {expiresIn: "2d"});
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: "2d" });
     return token;
 }
 
 // validate password for any user
-userSchema.methods.validatePassword = async function(passwordInputByUser){
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
     const user = this;
     const passwordHash = user.password;
 
