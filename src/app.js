@@ -9,9 +9,9 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 const { GoogleGenAI } = require("@google/genai");
 const connectDB = require("./config/database")
 const cookieParser = require('cookie-parser')
-const { setupWebSocket } = require("./utils/socket"
+const { setupWebSocket } = require("./utils/socket");
+const startKeepAlive = require("./jobs/keepAlive");
 
-);
 const cors = require("cors");
 const http = require("http");
 require('dotenv').config()
@@ -55,11 +55,12 @@ app.get("/test", (req, res) => {
     res.send("Server is Working Fine");
 });
 
+
 app.get("/health", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "DevTinder server is healthy"
-    });
+  res.status(200).json({ 
+    status: "ok",
+    message: "DevTinder Server is Healthy !!", 
+    time: new Date().toISOString() });
 });
 
 // Google gemini api test
@@ -96,7 +97,8 @@ connectDB()
   .then(() => {
     console.log("Database connection established...");
     server.listen(PORT, () => {
-      console.log(`Server is successfully listening on port...${PORT}`);
+      console.log(`Server running on port...${PORT}`);
+      startKeepAlive();
     });
   })
   .catch((err) => {
