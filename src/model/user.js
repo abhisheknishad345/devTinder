@@ -39,16 +39,27 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    googleId: { type: String, unique: true, sparse: true },
+    
     password: {
-        type: String,
-        required: true,
-        validate(value) {
-            if (!validator.isStrongPassword(value)) {
-                throw new Error("Enter a strong password: " + value)
+    type: String,
+    required: function () {
+        return !this.googleId;
+    },
+    validate: {
+        validator: function (value) {
+            // Google users don't need a password
+            if (!value && this.googleId) {
+                return true;
             }
 
-        }
+            // Normal users must have a strong password
+            return validator.isStrongPassword(value || "");
+        },
+        message: "Enter a strong password",
     },
+},
+
     age: {
         type: Number,
         min: 18,
@@ -110,5 +121,5 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
     return isValidPassword;
 }
 
-const UserModel = mongoose.model("User", userSchema)
+const UserModel = mongoose.models.User || mongoose.model("User", userSchema)
 module.exports = UserModel;

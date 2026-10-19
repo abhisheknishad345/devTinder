@@ -12,6 +12,8 @@ const cookieParser = require('cookie-parser')
 const { setupWebSocket } = require("./utils/socket");
 const startKeepAlive = require("./jobs/keepAlive");
 
+
+
 const cors = require("cors");
 const http = require("http");
 require('dotenv').config()
@@ -40,6 +42,7 @@ const requestRouter = require('./routes/request');
 const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
 const postRouter = require("./routes/post")
+const googleRouter = require("./routes/google")
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
@@ -47,6 +50,7 @@ app.use("/", requestRouter)
 app.use("/", userRouter)
 app.use("/", chatRouter)
 app.use("/", postRouter)
+app.use("/", googleRouter)
 
 const server = http.createServer(app);
 setupWebSocket(server) // call the web-socket

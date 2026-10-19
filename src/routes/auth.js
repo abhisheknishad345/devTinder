@@ -10,7 +10,6 @@ const ConnectionRequestModel = require('../model/connectionRequest')
 const { userAuth } = require('../middleWares/auth');
 const crypto = require("crypto");
 const { sendOTPEmail, passwordResetOTPEmail } = require("../services/email.service");
-const { count } = require('console');
 const { loginRateLimit, signupRateLimit, resendOtpRateLimit } = require("../middleWares/rateLimiter");
 const { loginLimiter } = require("../middleWares/rateLimiter");
 
