@@ -1,22 +1,21 @@
 
 const express = require("express");
 const app = express()
-const { GoogleGenAI } = require("@google/genai");
-
-const connectDB = require("./config/database")
-const User = require("./model/user")
-const cookieParser = require('cookie-parser')
-const { setupWebSocket } = require("./utils/socket");
-const cors = require("cors");
-const { generalLimiter } = require("./middleWares/rateLimiter");
-
+app.set("trust proxy", 1);
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-const http = require("http");
+const { GoogleGenAI } = require("@google/genai");
+const connectDB = require("./config/database")
+const cookieParser = require('cookie-parser')
+const { setupWebSocket } = require("./utils/socket"
 
+);
+const cors = require("cors");
+const http = require("http");
 require('dotenv').config()
+
 const PORT = process.env.PORT || 5700;
 
 const corsOptions = {
@@ -43,11 +42,11 @@ const chatRouter = require("./routes/chat");
 const postRouter = require("./routes/post")
 
 app.use("/", authRouter)
-app.use("/", generalLimiter, profileRouter)
-app.use("/", generalLimiter, requestRouter)
-app.use("/", generalLimiter, userRouter)
-app.use("/", generalLimiter, chatRouter)
-app.use("/", generalLimiter, postRouter)
+app.use("/", profileRouter)
+app.use("/", requestRouter)
+app.use("/", userRouter)
+app.use("/", chatRouter)
+app.use("/", postRouter)
 
 const server = http.createServer(app);
 setupWebSocket(server) // call the web-socket

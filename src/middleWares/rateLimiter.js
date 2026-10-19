@@ -1,77 +1,52 @@
-const rateLimit = require("express-rate-limit");
+const { RateLimiterMemory } = require("rate-limiter-flexible");
+// const { RateLimiterRedis } = require("rate-limiter-flexible"); // for production
 
-// General API limiter
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+const POINTS = 5;          // 5 attempts
+const DURATION = 15 * 60;  // per 15 minutes (in seconds)
 
-  standardHeaders: true,
-  legacyHeaders: false,
-
-  message: {
-    message: "Too many requests. Please try again later.",
-  },
+const createLimiter = (keyPrefix) =>
+  new RateLimiterMemory({ 
+    keyPrefix, 
+    points: POINTS, 
+    duration: DURATION 
 });
 
-const signupLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
+const loginLimiter = createLimiter("login");
+const signupLimiter = createLimiter("signup");
+const resendOtpLimiter = createLimiter("resend_otp");
 
-  standardHeaders: true,
-  legacyHeaders: false,
+const getKey = (req) => {
+  const email = req.body?.email?.toLowerCase().trim();
+  return email || req.ip;
+};
 
-  message: {
-    message: "Too many signup attempts. Please try again later.",
-  },
-});
+const rateLimit = (limiter, message) => async (req, res, next) => {
+  const key = getKey(req);
+  try {
+    const result = await limiter.consume(key);
+    res.set({
+      "X-RateLimit-Limit": POINTS,
+      "X-RateLimit-Remaining": result.remainingPoints,
+    });
+    req.rateLimitKey = key; // handy for resetting later
+    next();
+  } catch (err) {
+    // Real errors (e.g. Redis failure) are Error instances; rejections from the limiter are RateLimiterRes
+    if (err instanceof Error) return next(err);
 
-
-// Login limiter
-const loginLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  max: 5,
-
-  standardHeaders: true,
-  legacyHeaders: false,
-
-  message: {
-    message: "Too many login attempts. Please try again after 10 minutes.",
-  },
-});
-
-
-// OTP verification limiter
-const otpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-
-  standardHeaders: true,
-  legacyHeaders: false,
-
-  message: {
-    message: "Too many OTP attempts. Please try again later.",
-  },
-});
-
-
-// OTP resend limiter
-const resendOtpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 3,
-
-  standardHeaders: true,
-  legacyHeaders: false,
-
-  message: {
-    message: "Too many OTP requests. Please try again later.",
-  },
-});
-
+    const retryAfter = Math.ceil(err.msBeforeNext / 1000);
+    res.set("Retry-After", retryAfter);
+    return res.status(429).json({
+      success: false,
+      message,
+      retryAfterSeconds: retryAfter,
+    });
+  }
+};
 
 module.exports = {
-  generalLimiter,
-  signupLimiter,
   loginLimiter,
-  otpLimiter,
-  resendOtpLimiter,
+  loginRateLimit: rateLimit(loginLimiter, "Too many login attempts. Try again later."),
+  signupRateLimit: rateLimit(signupLimiter, "Too many signup attempts. Try again later."),
+  resendOtpRateLimit: rateLimit(resendOtpLimiter, "Too many OTP requests. Try again later."),
 };

@@ -8,16 +8,13 @@ const EmailVerification = require("../model/emailVerification");
 const PasswordReset = require("../model/passwordReset");
 const ConnectionRequestModel = require('../model/connectionRequest')
 const { userAuth } = require('../middleWares/auth');
-const {
-  generalLimiter, loginLimiter, signupLimiter, 
-  otpLimiter, resendOtpLimiter,
-} = require("../middleWares/rateLimiter");
 const crypto = require("crypto");
 const { sendOTPEmail, passwordResetOTPEmail } = require("../services/email.service");
+const { count } = require('console');
+const { loginRateLimit, signupRateLimit, resendOtpRateLimit } = require("../middleWares/rateLimiter");
+const { loginLimiter } = require("../middleWares/rateLimiter");
 
-// authRouter.get('/')
-
-authRouter.post("/signup", signupLimiter, async (req, res) => {
+authRouter.post("/signup", async (req, res) => {
 
     try {
 
@@ -141,7 +138,7 @@ authRouter.post("/signup", signupLimiter, async (req, res) => {
 });
 
 // email verify
-authRouter.post("/verify-email", otpLimiter, async (req, res) => {
+authRouter.post("/verify-email", async (req, res) => {
 
     try {
 
@@ -266,7 +263,7 @@ authRouter.post("/verify-email", otpLimiter, async (req, res) => {
 });
 
 // resend otp
-authRouter.post("/resend-otp", resendOtpLimiter, async (req, res) => {
+authRouter.post("/resend-otp", async (req, res) => {
 
     try {
 
@@ -372,17 +369,16 @@ authRouter.post("/resend-otp", resendOtpLimiter, async (req, res) => {
 
 
 // Login API
-authRouter.post("/login", loginLimiter, async (req, res) => {
+authRouter.post("/login", async (req, res) => {
 
     try {
         const { emailId, password } = req.body;
-
         const user = await User.findOne({
             emailId: emailId.toLowerCase().trim()
         });
 
         if (!user) {
-            throw new Error("Invalid Credentials");
+            return res.status(404).send("Invalid email or password");
         }
 
         // Email verification check
@@ -392,18 +388,16 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
             });
         }
 
-        if (!user) {
-            throw new Error("Invalid Credentials")
-
-        }
-        const isValidPassword = await user.validatePassword(password);
-        if (!isValidPassword) {
+         const isPasswordValid = await bcrypt.compare(
+            password,
+            user.password
+        );
+        if (!isPasswordValid) {
             throw new Error("Invalid Credentials");
         }
 
 
-        if (isValidPassword) {
-            // if (password == user.password) {
+        if (isPasswordValid) {
 
             // Create a JWT Token(
             const token = user.getJWT();
@@ -422,6 +416,9 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
                 }
             )
 
+            // inside loginController, after password check passes:
+            await loginLimiter.delete(req.rateLimitKey);
+
             res.json({
                 message: "Login Successfull !!",
                 data: user
@@ -431,20 +428,17 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
         } else {
             throw new Error("Invalid Credentials")
 
-
-
         }
 
     } catch (err) {
-        res.status(401).send("Login Error: " + err.message)
-
+        res.status(401).send("Login error: " + err.message)
 
     }
 
 });
 
 // forgot-password
-authRouter.post("/forgot-password", resendOtpLimiter, async (req, res) => {
+authRouter.post("/forgot-password", async (req, res) => {
 
     try {
 
@@ -547,7 +541,7 @@ authRouter.post("/forgot-password", resendOtpLimiter, async (req, res) => {
 });
 
 // reset password
-authRouter.post("/reset-password", otpLimiter, async (req, res) => {
+authRouter.post("/reset-password", async (req, res) => {
     try {
          validatePassword(req)
         const { emailId, otp, newPassword } = req.body;
