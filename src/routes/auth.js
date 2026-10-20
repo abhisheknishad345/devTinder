@@ -237,8 +237,9 @@ authRouter.post("/verify-email", async (req, res) => {
         res.cookie("token", token, {
             expires: new Date(Date.now() + 48 * 3600000),
             httpOnly: true,
-            secure: true,
-            sameSite: "none"
+            secure:  process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "lax"
         });
 
         return res.status(200).json({
@@ -409,8 +410,9 @@ authRouter.post("/login", async (req, res) => {
                 {
                     expires: new Date(Date.now() + 48 * 3600000),
                     httpOnly: true,
-                    secure: true,      // Essential for cross-site (HTTPS)
-                    sameSite: "none"
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "lax",
+                    path: "/",
 
                 }
             )
