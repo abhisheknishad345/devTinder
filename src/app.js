@@ -1,10 +1,16 @@
 
 const express = require("express");
 const app = express()
-app.set("trust proxy", 1);
+const cors = require("cors");
+const http = require("http");
+require('dotenv').config()
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
+const { corsOptions } = require("./config/cors");
+app.set("trust proxy", 1);
+app.use(cors(corsOptions));
+// app.options("/{*splat}", cors(corsOptions));
 
 const { GoogleGenAI } = require("@google/genai");
 const connectDB = require("./config/database")
@@ -13,25 +19,10 @@ const { setupWebSocket } = require("./utils/socket");
 const startKeepAlive = require("./jobs/keepAlive");
 
 
-
-const cors = require("cors");
-const http = require("http");
-require('dotenv').config()
-
 const PORT = process.env.PORT || 5700;
 
-const corsOptions = {
-  origin: "https://devloper-tinder.vercel.app",
-//   origin: "http://localhost:5173", // Allow request from frontend
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // Enable 
-};
-
-app.use(cors(corsOptions));
-
-app.use(express.json())
 app.use(cookieParser())
+app.use(express.json())
 /* it tell the Express app
  Whenever a request comes with JSON data in the body, automatically parse it and convert it into a JavaScript object.
  */

@@ -4,6 +4,9 @@ const socket = require("socket.io");
 const crypto = require("crypto")
 const Chat = require("../model/chat")
 const Connection = require("../model/connectionRequest")
+const jwt = require("jsonwebtoken");
+const { allowedOrigins } = require("../config/cors");
+const cookie = require("cookie");
 
 const getSecretRoomid = (userId, targetUserId) => {
 
@@ -19,13 +22,21 @@ const setupWebSocket = (server) => {
 
 
     const io = socket(server, {
-        cors: {
-            origin: "https://devloper-tinder.vercel.app",
-            // origin: "http://lcalhost:5173",
-            credentials: true
-
-        }
+       cors: {
+    origin: ["https://devloper-tinder.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  },
     });
+
+    io.use((socket, next) => {
+  try {
+    const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+    socket.user = jwt.verify(cookies.token, process.env.SECRET_KEY);
+    next();
+  } catch {
+    next(new Error("Unauthorized"));
+  }
+});
 
     io.on("connection", (socket) => {
         // console.log("Client connected:", socket.id);
