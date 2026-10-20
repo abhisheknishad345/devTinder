@@ -108,7 +108,7 @@ userSchema.index({ Fname: 1, Lname: 1 })
 // get token for any user 
 userSchema.methods.getJWT = function () {
     const user = this;
-    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: "2d" });
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
     return token;
 }
 

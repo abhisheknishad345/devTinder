@@ -235,11 +235,10 @@ authRouter.post("/verify-email", async (req, res) => {
 
         // 10. Set cookie
         res.cookie("token", token, {
-            expires: new Date(Date.now() + 48 * 3600000),
             httpOnly: true,
-            secure:  process.env.NODE_ENV === "production",
-            path: "/",
-            sameSite: "lax"
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 48 * 60 * 60 * 1000,
         });
 
         return res.status(200).json({
@@ -408,11 +407,10 @@ authRouter.post("/login", async (req, res) => {
             res.cookie("token", token,
 
                 {
-                    expires: new Date(Date.now() + 48 * 3600000),
                     httpOnly: true,
                     secure: process.env.NODE_ENV === "production",
-                    sameSite: "lax",
-                    path: "/",
+                    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+                    maxAge: 48 * 60 * 60 * 1000,
 
                 }
             )
