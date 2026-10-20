@@ -377,7 +377,13 @@ authRouter.post("/login", async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).send("Invalid email or password");
+            return res.status(404).send("Invalid User");
+        }
+
+        if (!user.password) {
+            return res.status(400).json({
+            message: "This account uses Google login. Please continue with Google."
+            });
         }
 
         // Email verification check
