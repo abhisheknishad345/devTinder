@@ -236,8 +236,8 @@ authRouter.post("/verify-email", async (req, res) => {
         // 10. Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: true,
+            sameSite: "none",
             maxAge: 48 * 60 * 60 * 1000,
         });
 
@@ -414,8 +414,8 @@ authRouter.post("/login", async (req, res) => {
 
                 {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
-                    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+                    secure: true,
+                    sameSite: "none",
                     maxAge: 48 * 60 * 60 * 1000,
 
                 }

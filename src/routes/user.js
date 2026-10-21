@@ -4,6 +4,7 @@ const { userAuth } = require("../middleWares/auth");
 const ConnectionRequestModel = require("../model/connectionRequest");
 const userRouter = express.Router()
 const User = require("../model/user")
+const mongoose = require("mongoose");
 
 const USER_PUBLIC_DATA = "Fname Lname age gender profileurl skills about"
 
@@ -68,57 +69,46 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 // Feed api - Pagination 
 
 userRouter.get("/feed", userAuth, async (req, res) => {
-    try {
-        const loggedInUser = req.user;
-       
-        const userId = loggedInUser._id.toString();
+  try {
+    const loggedInUserId = req.user._id;
 
-        const page = parseInt(req.query.page) || 1;
-        const limit = 6;
-        const skip = (page - 1) * limit;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = 6;
+    const skip = (page - 1) * limit;
 
-        const connectionRequest = await ConnectionRequestModel.find({
-            $or: [
-                { fromUserId: loggedInUser._id },
-                { toUserId: loggedInUser._id }
-            ]
-        }).select("fromUserId toUserId");
+    // ids only, plain objects, no _id field
+    const connectionRequest = await ConnectionRequestModel.find(
+      { $or: [{ fromUserId: loggedInUserId }, { toUserId: loggedInUserId }] },
+      { fromUserId: 1, toUserId: 1, _id: 0 }
+    ).lean();
 
-        const hideUserfromFeed = new Set();
+    // include self in hidden
+    const hideUserfromFeed = new Set([loggedInUserId.toString()]);
+    connectionRequest.forEach((req) => {
+      hideUserfromFeed.add(req.fromUserId.toString());
+      hideUserfromFeed.add(req.toUserId.toString());
+    });
 
-        connectionRequest.forEach((req) => {
-            hideUserfromFeed.add(req.fromUserId.toString());
-            hideUserfromFeed.add(req.toUserId.toString());
-        });
+    const hideIds = [...hideUserfromFeed].map((id) => new mongoose.Types.ObjectId(id));
 
-        // include self in hidden
-        hideUserfromFeed.add(userId);
-        
+    const users = await User.find({ _id: { $nin: hideIds } })
+      .select(USER_PUBLIC_DATA)
+      .sort({ _id: -1 }) // stable order so pages don't repeat or skip users
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
-        const users = await User.find({
-            _id: { $nin: Array.from(hideUserfromFeed) }
-        })
-            .select(USER_PUBLIC_DATA)
-            .limit(limit)
-            .skip(skip);
-
-
-            //  console.log("Feed IDs:", users.map(u => u._id.toString()));
-
-        res.json({
-            message: "Total people in feed",
-            data: users
-        });
-
-
-
-    } catch (err) {
-        res.status(404).send(err);
-    }
-
-    //  console.log("Logged user ID:", req.user._id);
-       
+    res.status(200).json({
+      message: "Total people in feed",
+      data: users,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
 });
+
+//  console.log("Logged user ID:", req.user._id);
 
 // now Pagination - help to divide the large dataset into smaller chunk and managable dataset
 
