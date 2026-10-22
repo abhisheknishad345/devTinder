@@ -39,7 +39,7 @@ profileRouter.put("/profile/update", userAuth, async (req, res) => {
         // console.log(loggedInUser)
         res.json({
             
-            message: `${loggedInUser.Fname}, Your profile updation successful!`,
+            message: "Profile Changes Saved",
             data: loggedInUser,
         }
     )
