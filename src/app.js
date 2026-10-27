@@ -12,7 +12,6 @@ app.set("trust proxy", 1);
 app.use(cors(corsOptions));
 // app.options("/{*splat}", cors(corsOptions));
 
-const { GoogleGenAI } = require("@google/genai");
 const connectDB = require("./config/database")
 const cookieParser = require('cookie-parser')
 const { setupWebSocket } = require("./utils/socket");
@@ -59,32 +58,6 @@ app.get("/health", (req, res) => {
 });
 
 // Google gemini api test
-
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
-});
-
-app.get( "/gemini-test", async (req, res) => {
-
-    const {problem} = req.body;
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash-lite",
-            contents: problem
-        });
-
-
-        res.json({
-            answer: response.text
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: "Gemini API failed"
-        });
-    }
-});
 
 
 
