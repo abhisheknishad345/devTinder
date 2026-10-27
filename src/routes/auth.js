@@ -235,10 +235,7 @@ authRouter.post("/verify-email", async (req, res) => {
 
         // 10. Set cookie
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            maxAge: 48 * 60 * 60 * 1000,
+            expires: new Date(Date.now() + 12 * 60 * 60 * 1000)
         });
 
         return res.status(200).json({
@@ -382,7 +379,7 @@ authRouter.post("/login", async (req, res) => {
 
         if (!user.password) {
             return res.status(400).json({
-            message: "This account uses Google login. Please continue with Google."
+                message: "This account uses Google login. Please continue with Google."
             });
         }
 
@@ -393,7 +390,7 @@ authRouter.post("/login", async (req, res) => {
             });
         }
 
-         const isPasswordValid = await bcrypt.compare(
+        const isPasswordValid = await bcrypt.compare(
             password,
             user.password
         );
@@ -413,10 +410,7 @@ authRouter.post("/login", async (req, res) => {
             res.cookie("token", token,
 
                 {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: "none",
-                    maxAge: 48 * 60 * 60 * 1000,
+                    expires: new Date(Date.now() + 12 * 60 * 60 * 1000)
 
                 }
             )
@@ -548,7 +542,7 @@ authRouter.post("/forgot-password", async (req, res) => {
 // reset password
 authRouter.post("/reset-password", async (req, res) => {
     try {
-         validatePassword(req)
+        validatePassword(req)
         const { emailId, otp, newPassword } = req.body;
 
         // 1. Check input
@@ -650,10 +644,8 @@ authRouter.post("/logout", userAuth, async (req, res) => {
 
     try {
         res.cookie("token", null, {
-            expires: new Date(Date.now()),
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            expires: new Date(Date.now())
+            
         })
         res.status(200).json({ message: "Logout successful!" });
 
@@ -693,10 +685,8 @@ authRouter.delete("/user/delete", userAuth, async (req, res) => {
 
         // 2. Cookie / Token clear
         res.cookie("token", null, {
-            expires: new Date(Date.now()),
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            expires: new Date(Date.now())
+            
         });
 
         res.status(200).json({ message: "Account deleted successful!" });
