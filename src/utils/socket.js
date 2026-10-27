@@ -23,7 +23,7 @@ const setupWebSocket = (server) => {
 
     const io = socket(server, {
        cors: {
-    origin: ["https://devloper-tinder.vercel.app", "http://localhost:5173"],
+    origin: [ "http://3.26.61.180", "http://localhost:5173"],
     credentials: true,
   },
     });
