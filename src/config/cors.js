@@ -1,5 +1,5 @@
 const allowedOrigins = [
-  "https://devloper-tinder.vercel.app",
+  "http:3.26.61.180",
   "http://localhost:5173", // your Vite dev port
 ];
 
