@@ -1,5 +1,5 @@
 const allowedOrigins = [
-  "http:3.26.61.180",
+  "https://www.devfinder.space",
   "http://localhost:5173", // your Vite dev port
 ];
 

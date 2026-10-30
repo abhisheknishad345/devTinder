@@ -23,7 +23,7 @@ const setupWebSocket = (server) => {
 
     const io = socket(server, {
        cors: {
-    origin: [ "http://3.26.61.180", "http://localhost:5173"],
+    origin: [ "https://devfinder.space", "http://localhost:5173"],
     credentials: true,
   },
     });
@@ -40,7 +40,7 @@ const setupWebSocket = (server) => {
 
     io.on("connection", (socket) => {
         // console.log("Client connected:", socket.id);
-        socket.on("joinChat", ({ Fname, userId, targetUserId }) => {
+        socket.on("joinChat", ({ userId, targetUserId }) => {
             const roomId = getSecretRoomid(userId, targetUserId)
             // console.log(Fname + " Joining Room: " + roomId);
             socket.join(roomId)
