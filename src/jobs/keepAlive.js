@@ -10,7 +10,7 @@ const startKeepAlive = () => {
   }
 
   // Every 14 minutes (Render sleeps after 15 minutes of no inbound traffic)
-  cron.schedule("*/13 * * * *", async () => {
+  cron.schedule("0 */2 * * *", async () => {
     try {
       const res = await fetch(`${url}/health`); // built-in fetch, Node 18+
       console.log(`Keep-alive ping: ${res.status} at ${new Date().toISOString()}`);
