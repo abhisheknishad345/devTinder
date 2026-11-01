@@ -25,7 +25,8 @@ const setupWebSocket = (server) => {
        cors: {
     origin: [ "https://devfinder.space", "http://localhost:5173"],
     credentials: true,
-  },
+        },
+         path: "/socket.io/",
     });
 
     io.use((socket, next) => {
